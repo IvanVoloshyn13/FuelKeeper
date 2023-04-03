@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="homeFragmentText">
+        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/home_text_view_color</item>
+        <item name="android:elegantTextHeight">true</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="homeFragmentNumbers">
+        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/home_text_view_number_color</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="homeFragmentUnit">
+        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/home_text_view_number_color</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+
+</resources>

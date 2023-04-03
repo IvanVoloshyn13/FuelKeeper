@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    tools:context="presentation.home.HomeFragment">
+
+    <TextView
+        android:id="@+id/fuel_average"
+        style="@style/homeFragmentText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:clickable="false"
+        android:text="@string/fuel_average"
+        app:layout_constraintEnd_toStartOf="@+id/total_expenses"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </TextView>
+
+    <TextView
+        android:id="@+id/total_expenses"
+        style="@style/homeFragmentText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:text="@string/total_expenses"
+        android:textColor="@color/home_text_view_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/fuel_average"
+        app:layout_constraintTop_toTopOf="@+id/fuel_average">
+
+    </TextView>
+
+    <TextView
+        android:id="@+id/tv_fuel_average_detail"
+        style="@style/homeFragmentNumbers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp"
+        app:layout_constraintEnd_toEndOf="@+id/fuel_average"
+        app:layout_constraintStart_toStartOf="@+id/fuel_average"
+        app:layout_constraintTop_toBottomOf="@+id/fuel_average"
+        tools:text="5.62">
+
+    </TextView>
+
+    <TextView
+        android:id="@+id/tv_total_expenses_detail"
+        style="@style/homeFragmentNumbers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:paddingStart="6dp"
+        android:paddingEnd="6dp"
+        app:layout_constraintEnd_toEndOf="@+id/total_expenses"
+        app:layout_constraintStart_toStartOf="@+id/total_expenses"
+        app:layout_constraintTop_toBottomOf="@+id/total_expenses"
+        tools:text="45.62">
+
+    </TextView>
+
+    <TextView
+        android:id="@+id/fuel_average_unit"
+        style="@style/homeFragmentUnit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/l_100_km"
+        app:layout_constraintEnd_toEndOf="@id/tv_fuel_average_detail"
+        app:layout_constraintTop_toBottomOf="@+id/tv_fuel_average_detail">
+
+    </TextView>
+
+    <TextView
+        android:id="@+id/total_expenses_unit"
+        style="@style/homeFragmentUnit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/pln_100_km"
+        app:layout_constraintEnd_toEndOf="@id/tv_total_expenses_detail"
+        app:layout_constraintTop_toBottomOf="@+id/tv_total_expenses_detail">
+
+    </TextView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btt_add_new_refill"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_fuel"
+        app:backgroundTint="@color/home_text_view_number_color"
+        app:layout_constraintEnd_toStartOf="@id/total_expenses"
+        app:layout_constraintStart_toEndOf="@id/fuel_average"
+        app:layout_constraintTop_toBottomOf="@id/total_expenses_unit">
+
+    </com.google.android.material.floatingactionbutton.FloatingActionButton>
+
+    <TextView
+        android:id="@+id/recent_refueling"
+        style="@style/homeFragmentText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/recent_refill"
+        app:layout_constraintEnd_toEndOf="@id/btt_add_new_refill"
+        app:layout_constraintStart_toStartOf="@id/btt_add_new_refill"
+        app:layout_constraintTop_toBottomOf="@+id/btt_add_new_refill">
+
+    </TextView>
+
+    <TextView
+        android:id="@+id/tv_last_refuel_distance"
+        style="@style/homeFragmentUnit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintEnd_toStartOf="@id/tv_last_refuel_fuel_average"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recent_refueling"
+        tools:text="+ 720 km">
+
+    </TextView>
+
+    <TextView
+        android:id="@+id/tv_last_refuel_fuel_average"
+        style="@style/homeFragmentUnit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintEnd_toStartOf="@id/tv_last_refuel_payment"
+        app:layout_constraintStart_toEndOf="@id/tv_last_refuel_distance"
+        app:layout_constraintTop_toTopOf="@+id/tv_last_refuel_distance"
+        tools:text="6,50 l/100 km">
+
+    </TextView>
+
+    <TextView
+        android:id="@+id/tv_last_refuel_payment"
+        style="@style/homeFragmentUnit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tv_last_refuel_fuel_average"
+        app:layout_constraintTop_toTopOf="@+id/tv_last_refuel_distance"
+        tools:text="312 pln">
+
+    </TextView>
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/summary_detail_card_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="@color/home_card_view_color"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_last_refuel_fuel_average">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/sum_stat"
+                style="@style/homeFragmentText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/stat"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+            </TextView>
+
+            <TextView
+                android:id="@+id/tv_summary_distance"
+                style="@style/homeFragmentUnit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="10dp"
+                android:drawableLeft="@drawable/ic_distance"
+                android:drawablePadding="2dp"
+                android:gravity="center"
+                app:layout_constraintEnd_toStartOf="@id/tv_summary_payments"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/sum_stat"
+                tools:text="+ 720 km">
+
+            </TextView>
+
+            <TextView
+                android:id="@+id/tv_summary_payments"
+                style="@style/homeFragmentUnit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:drawableLeft="@drawable/ic_cash"
+                android:drawablePadding="2dp"
+                android:gravity="center"
+                app:layout_constraintEnd_toStartOf="@id/tv_summary_fuel"
+                app:layout_constraintStart_toEndOf="@id/tv_summary_distance"
+                app:layout_constraintTop_toTopOf="@+id/tv_summary_distance"
+                tools:text="6,50 l/100 km">
+
+            </TextView>
+
+            <TextView
+                android:id="@+id/tv_summary_fuel"
+                style="@style/homeFragmentUnit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_sum_fuel"
+                android:drawablePadding="2dp"
+                android:gravity="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tv_summary_payments"
+                app:layout_constraintTop_toTopOf="@+id/tv_summary_payments"
+                tools:text="312 pln">
+
+            </TextView>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

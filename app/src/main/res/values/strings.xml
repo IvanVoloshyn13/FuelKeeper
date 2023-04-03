@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">FuelKeeper</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Home Fragment text resources -->
+    <string name="fuel_average">Fuel Average</string>
+    <string name="total_expenses">Total Expenses</string>
+    <string name="l_100_km">l/100 km</string>
+    <string name="pln_100_km">PLN/100 km</string>
+    <string name="recent_refill">Recent Refill</string>
+    <string name="stat">Summary</string>
+
+    <!-- Add new refuel Fragment text resources -->
+    <string name="refuel_date_hint">Data tankowania</string>
+    <string name="current_mileage_hint">Aktualny przebieg</string>
+    <string name="fuel_amount_hint">Ilosc zatankowanego paliwa</string>
+    <string name="fuel_price_hint">Cena litra paliwa</string>
+    <string name="notes_hint">Notatki...</string>
+    <string name="save_btt">Zapisz</string>
+
+</resources>
