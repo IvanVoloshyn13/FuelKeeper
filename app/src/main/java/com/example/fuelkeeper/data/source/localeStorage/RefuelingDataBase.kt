@@ -7,6 +7,4 @@ import com.example.fuelkeeper.domain.models.RefuelingEntity
 @Database(entities = [RefuelingEntity::class], version = 1, exportSchema = false)
 abstract class RefuelingDataBase : RoomDatabase() {
     abstract fun getRefuelingDao(): RefuelingDao
-
-
 }

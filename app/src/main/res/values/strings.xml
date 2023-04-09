@@ -18,5 +18,6 @@
     <string name="fuel_price_hint">Cena litra paliwa</string>
     <string name="notes_hint">Notatki...</string>
     <string name="save_btt">Zapisz</string>
+    <string name="required">required</string>
 
 </resources>

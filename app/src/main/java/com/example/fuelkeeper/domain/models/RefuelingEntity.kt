@@ -11,6 +11,7 @@ data class RefuelingEntity(
     val refuelDate: String,
     val currentMileage: Int,
     val fuelAmount: Double,
-    val fuelPricePerLiter: Float,
-    val notes: String? = null
+    val fuelPricePerLiter: Double,
+    val notes: String? = null,
+    val fillUp: Boolean
 )

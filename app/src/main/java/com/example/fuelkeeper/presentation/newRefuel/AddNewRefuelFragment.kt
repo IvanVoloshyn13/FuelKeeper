@@ -1,26 +1,196 @@
 package com.example.fuelkeeper.presentation.newRefuel
 
+import android.app.DatePickerDialog
+import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.example.fuelkeeper.R
+import com.example.fuelkeeper.databinding.FragmentAddNewRefuelBinding
+import com.example.fuelkeeper.domain.models.RefuelingEntity
+import com.example.fuelkeeper.domain.models.RefuelingModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.DateFormat
+import java.text.Format
+import java.text.SimpleDateFormat
+import java.util.*
+
 
 @AndroidEntryPoint
 class AddNewRefuelFragment : Fragment() {
-
-
+    private lateinit var binding: FragmentAddNewRefuelBinding
+    private val addNewRefuelViewModel: AddNewRefuelViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_new_refuel, container, false)
+        binding = FragmentAddNewRefuelBinding.inflate(inflater, container, false)
+        return binding.root
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        fuelAmountFocusListener()
+        currentMileageFocusListener()
+        fuelPriceFocusListener()
+        binding.etRefuelDate.showSoftInputOnFocus = false
+
+        val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        view.setOnTouchListener(object : View.OnTouchListener {
+            override fun onTouch(view: View?, motionEvent: MotionEvent?): Boolean {
+                if (motionEvent != null) {
+                    binding.currentMileageContainer.helperText = validCurrentMileage()
+                    binding.fuelPriceContainer.helperText = validFuelPrice()
+                    binding.fuelAmountContainer.helperText = validFuelAmount()
+                    return true
+                }
+                return false
+            }
+
+        })
+        binding.apply {
+            val data = addNewRefuelViewModel.setLocaleDate()
+            etRefuelDate.setText(data)
+            etRefuelDate.setOnFocusChangeListener { view, hasFocus ->
+                if (hasFocus) {
+                    setDateByDatePicker()
+                    imm.hideSoftInputFromWindow(
+                        etRefuelDate.applicationWindowToken,
+                        InputMethodManager.HIDE_NOT_ALWAYS
+                    )
+                }
+            }
+        }
+
+        binding.bttSave.setOnClickListener {
+            if (submitForm()) {
+                createNewRefuel()
+            } else {
+                Toast.makeText(this.context, "Please complete all fields ", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+    }
+
 
     companion object {
 
     }
+
+    private fun setDateByDatePicker() {
+        val datePicker = DatePickerDialog(requireContext())
+        datePicker.show()
+        var formattedDate: String? = null
+        val locale = Locale.getDefault()
+        val calendar = Calendar.getInstance()
+        datePicker.setOnDateSetListener { datePicker, year, month, dayOfMonth ->
+            calendar.set(year, month, dayOfMonth)
+            val dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale)
+            formattedDate = dateFormat.format(calendar.time)
+            binding.etRefuelDate.setText(formattedDate)
+        }
+    }
+
+    private fun createNewRefuel() {
+        val date = binding.etRefuelDate.text.toString()
+        val currentMileage = binding.etCurrentMileage.text.toString().toInt()
+        val fuelAmount = binding.etFuelAmount.text.toString().toDouble()
+        val fuelPricePerLiter = binding.etFuelPrice.text.toString().toDouble()
+        val notes: String? = binding.etNotes.text.toString()
+        val fillUp = binding.checkbox.isChecked
+        val newRefuel = RefuelingModel(
+            refuelDate = date,
+            currentMileage = currentMileage,
+            fuelAmount = fuelAmount,
+            fuelPricePerLiter = fuelPricePerLiter,
+            notes = notes,
+            fillUp = fillUp
+        )
+        addNewRefuelViewModel.addNewRefuel(newRefuel) {
+            when (it) {
+                true -> {
+                    Toast.makeText(this.requireContext(), "Success", Toast.LENGTH_SHORT).show()
+                    findNavController().navigate(R.id.action_addNewRefuelFragment_to_homeFragment)
+                }
+                else -> {
+                    Toast.makeText(this.requireContext(), "Some Error", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+
+    private fun fuelAmountFocusListener() {
+        binding.etFuelAmount.setOnFocusChangeListener { view, focused ->
+            if (!focused) {
+                binding.fuelAmountContainer.helperText = validFuelAmount()
+            }
+        }
+    }
+
+    private fun validFuelAmount(): String? {
+        val fuelAmountText = binding.etFuelAmount.text.toString()
+        if (fuelAmountText.isEmpty()) {
+            return "This field can not be empty"
+        }
+        return null
+    }
+
+    private fun currentMileageFocusListener() {
+        binding.etCurrentMileage.setOnFocusChangeListener { view, focused ->
+            if (!focused) {
+                binding.currentMileageContainer.helperText = validCurrentMileage()
+            }
+        }
+    }
+
+    private fun validCurrentMileage(): String? {
+        val currentMileageText = binding.etCurrentMileage.text.toString()
+        if (currentMileageText.isEmpty()) {
+            return "This field can not be empty"
+        }
+        return null
+    }
+
+
+    private fun fuelPriceFocusListener() {
+        binding.etFuelPrice.setOnFocusChangeListener { view, focused ->
+            if (!focused) {
+                binding.fuelPriceContainer.helperText = validFuelPrice()
+            }
+        }
+    }
+
+    private fun validFuelPrice(): String? {
+        val fuelPriceText = binding.etFuelPrice.text.toString()
+        if (fuelPriceText.isEmpty()) {
+            return "This field can not be empty"
+        }
+        return null
+    }
+
+
+    private fun submitForm(): Boolean {
+        binding.fuelAmountContainer.helperText = validFuelAmount()
+        binding.currentMileageContainer.helperText = validCurrentMileage()
+        binding.fuelPriceContainer.helperText = validFuelPrice()
+        val validFuelAmount = binding.fuelAmountContainer.helperText == null
+        val validCurrentMileage = binding.currentMileageContainer.helperText == null
+        val validFuelPrice = binding.fuelPriceContainer.helperText == null
+        if (validFuelAmount && validCurrentMileage && validFuelPrice) {
+            return true
+        }
+        return false
+    }
 }
+
+
+

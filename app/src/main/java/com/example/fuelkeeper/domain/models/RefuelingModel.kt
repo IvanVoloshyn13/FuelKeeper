@@ -3,9 +3,10 @@ package com.example.fuelkeeper.domain.models
 import java.util.Date
 
 data class RefuelingModel(
-    val refuelDate: Date,
+    val refuelDate: String,
     val currentMileage: Int,
     val fuelAmount: Double,
-    val fuelPrice: Float,
-    val notes: String
+    val fuelPricePerLiter: Double,
+    val notes: String? = null,
+    val fillUp: Boolean
 )

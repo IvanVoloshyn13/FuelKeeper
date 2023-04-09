@@ -14,9 +14,12 @@ interface RefuelingDao {
     suspend fun addNewRefuelData(refuel: RefuelingEntity): Long
 
     @Query("SELECT * FROM refueling_register")
-    fun getRefuelingList(): LiveData<List<RefuelingEntity>>
+    suspend fun getRefuelingList(): List<RefuelingEntity>
 
     @Query("DELETE FROM refueling_register WHERE id=:id")
     suspend fun deleteRefuel(id: Int)
+
+    @Query("SELECT fuelAmount FROM refueling_register ")
+    suspend fun getFuelAmountLog(): List<Double>
 }
 
