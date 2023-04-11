@@ -1,4 +1,4 @@
-package com.example.fuelkeeper.domain.models
+package com.example.fuelkeeper.data.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

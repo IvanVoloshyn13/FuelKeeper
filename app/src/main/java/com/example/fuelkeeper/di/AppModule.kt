@@ -3,9 +3,10 @@ package com.example.fuelkeeper.di
 import com.example.fuelkeeper.data.repository.RefuelRepositoryImpl
 import com.example.fuelkeeper.data.source.localeStorage.RefuelingDataBase
 import com.example.fuelkeeper.domain.repositoryInterface.RefuelRepository
-import com.example.fuelkeeper.domain.usecase.HomeFrag.GetFuelAmountLogUseCase
-import com.example.fuelkeeper.domain.usecase.addNewRefueldFrag.AddNewRefuelingUseCase
-import com.example.fuelkeeper.domain.usecase.addNewRefueldFrag.SetLocaleDateUseCase
+import com.example.fuelkeeper.domain.usecase.HomeFrag.GetLastRefuelDetailUseCase
+import com.example.fuelkeeper.domain.usecase.HomeFrag.GetSummaryRefuelDetailUseCase
+import com.example.fuelkeeper.domain.usecase.addNewRefuelFrag.AddNewRefuelingUseCase
+import com.example.fuelkeeper.domain.usecase.addNewRefuelFrag.SetLocaleDateUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,6 +34,9 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideFuelAmountLogUseCAse(refuelRepository: RefuelRepository) =
-        GetFuelAmountLogUseCase(refuelRepository = refuelRepository)
+    fun provideGetLastRefuelDetailUseCase() = GetLastRefuelDetailUseCase()
+
+    @Provides
+    @Singleton
+    fun provideGetSummaryRefuelDetailUseCase() = GetSummaryRefuelDetailUseCase()
 }

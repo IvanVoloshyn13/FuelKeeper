@@ -1,10 +1,8 @@
 package com.example.fuelkeeper.data.repository
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import com.example.fuelkeeper.data.source.localeStorage.RefuelingDao
 import com.example.fuelkeeper.data.source.localeStorage.RefuelingDataBase
-import com.example.fuelkeeper.domain.models.RefuelingEntity
+import com.example.fuelkeeper.data.models.RefuelingEntity
+import com.example.fuelkeeper.domain.models.RefuelingModel
 import com.example.fuelkeeper.domain.repositoryInterface.RefuelRepository
 import java.text.DateFormat
 import java.util.*
@@ -14,19 +12,21 @@ import kotlin.collections.ArrayList
 class RefuelRepositoryImpl @Inject constructor(private val db: RefuelingDataBase) :
     RefuelRepository {
 
-    override var allRefuelList = ArrayList<RefuelingEntity>()
-
-    override suspend fun getAllRefuelLog() {
-        allRefuelList = db.getRefuelingDao().getRefuelingList() as ArrayList<RefuelingEntity>
+    override suspend fun getAllRefuelLog(): ArrayList<RefuelingEntity> {
+        return db.getRefuelingDao().getRefuelingList() as ArrayList<RefuelingEntity>
     }
 
-    override suspend fun addNewRefuelLog(refuel: RefuelingEntity): Boolean {
-        val rowId = db.getRefuelingDao().addNewRefuelData(refuel)
+    override suspend fun addNewRefuelLog(refuel: RefuelingModel): Boolean {
+        val refuelingEntity = RefuelingEntity(
+            refuelDate = refuel.refuelDate,
+            currentMileage = refuel.currentMileage,
+            fuelAmount = refuel.fuelAmount,
+            fuelPricePerLiter = refuel.fuelPricePerLiter,
+            notes = refuel.notes,
+            fillUp = refuel.fillUp
+        )
+        val rowId = db.getRefuelingDao().addNewRefuelData(refuelingEntity)
         return rowId > 0
-    }
-
-    override suspend fun getFuelAmountLog(): List<Double> {
-        return db.getRefuelingDao().getFuelAmountLog()
     }
 
 

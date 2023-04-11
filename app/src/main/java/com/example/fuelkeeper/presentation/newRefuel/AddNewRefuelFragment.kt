@@ -4,7 +4,6 @@ import android.app.DatePickerDialog
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
@@ -14,12 +13,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.fuelkeeper.R
 import com.example.fuelkeeper.databinding.FragmentAddNewRefuelBinding
-import com.example.fuelkeeper.domain.models.RefuelingEntity
 import com.example.fuelkeeper.domain.models.RefuelingModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.DateFormat
-import java.text.Format
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -27,12 +23,14 @@ import java.util.*
 class AddNewRefuelFragment : Fragment() {
     private lateinit var binding: FragmentAddNewRefuelBinding
     private val addNewRefuelViewModel: AddNewRefuelViewModel by viewModels()
+    private lateinit var datePicker: DatePickerDialog
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         binding = FragmentAddNewRefuelBinding.inflate(inflater, container, false)
+        datePicker = DatePickerDialog(requireContext())
         return binding.root
     }
 
@@ -44,23 +42,23 @@ class AddNewRefuelFragment : Fragment() {
         binding.etRefuelDate.showSoftInputOnFocus = false
 
         val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        view.setOnTouchListener(object : View.OnTouchListener {
-            override fun onTouch(view: View?, motionEvent: MotionEvent?): Boolean {
-                if (motionEvent != null) {
-                    binding.currentMileageContainer.helperText = validCurrentMileage()
-                    binding.fuelPriceContainer.helperText = validFuelPrice()
-                    binding.fuelAmountContainer.helperText = validFuelAmount()
-                    return true
-                }
-                return false
-            }
+        binding.root.setOnClickListener {
+            imm.hideSoftInputFromWindow(
+                it.applicationWindowToken,
+                InputMethodManager.HIDE_NOT_ALWAYS
+            )
+            binding.currentMileageContainer.helperText = validCurrentMileage()
+            binding.fuelPriceContainer.helperText = validFuelPrice()
+            binding.fuelAmountContainer.helperText = validFuelAmount()
+        }
 
-        })
+
         binding.apply {
             val data = addNewRefuelViewModel.setLocaleDate()
             etRefuelDate.setText(data)
             etRefuelDate.setOnFocusChangeListener { view, hasFocus ->
                 if (hasFocus) {
+                    datePicker.show()
                     setDateByDatePicker()
                     imm.hideSoftInputFromWindow(
                         etRefuelDate.applicationWindowToken,
@@ -69,6 +67,9 @@ class AddNewRefuelFragment : Fragment() {
                 }
             }
         }
+        datePicker.setOnCancelListener { binding.etRefuelDate.clearFocus() }
+
+
 
         binding.bttSave.setOnClickListener {
             if (submitForm()) {
@@ -86,9 +87,7 @@ class AddNewRefuelFragment : Fragment() {
     }
 
     private fun setDateByDatePicker() {
-        val datePicker = DatePickerDialog(requireContext())
-        datePicker.show()
-        var formattedDate: String? = null
+        var formattedDate: String
         val locale = Locale.getDefault()
         val calendar = Calendar.getInstance()
         datePicker.setOnDateSetListener { datePicker, year, month, dayOfMonth ->
@@ -96,6 +95,7 @@ class AddNewRefuelFragment : Fragment() {
             val dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale)
             formattedDate = dateFormat.format(calendar.time)
             binding.etRefuelDate.setText(formattedDate)
+
         }
     }
 

@@ -1,34 +1,49 @@
 package com.example.fuelkeeper.domain.usecase.HomeFrag
 
+import com.example.fuelkeeper.domain.models.LastRefuelDetailsModel
 import com.example.fuelkeeper.domain.models.RefuelingModel
 import com.example.fuelkeeper.domain.repositoryInterface.RefuelRepository
+import java.text.DecimalFormat
 import javax.inject.Inject
 
-class GetLastRefuelDetailUseCase @Inject constructor(val repository: RefuelRepository) {
+class GetLastRefuelDetailUseCase  {
 
-    fun getLastRefuelDetails(): RefuelingModel {
-        val currentRefuelList = repository.allRefuelList
-        val lastRefuelEntity = currentRefuelList.lastOrNull()
-        if (lastRefuelEntity != null) {
-            return RefuelingModel(
-                refuelDate = lastRefuelEntity.refuelDate,
-                currentMileage = lastRefuelEntity.currentMileage,
-                fuelAmount = lastRefuelEntity.fuelAmount,
-                fuelPricePerLiter = lastRefuelEntity.fuelPricePerLiter,
-                notes = lastRefuelEntity.notes,
-                fillUp = lastRefuelEntity.fillUp
+    fun getLastRefuelDetails(refuelList: ArrayList<RefuelingModel>): LastRefuelDetailsModel {
+        val df = DecimalFormat("#.##")
+
+        if (refuelList.size > 1) {
+            val lastRefuelEntity = refuelList.lastOrNull()
+            val secondLastRefuelEntity = refuelList[refuelList.size - 2]
+            if (lastRefuelEntity != null && secondLastRefuelEntity != null) {
+                val lastRefuelDistance =
+                    lastRefuelEntity.currentMileage - secondLastRefuelEntity.currentMileage
+                val lastRefuelFuelAverage =
+                    df.format(lastRefuelEntity.fuelAmount / lastRefuelDistance * 100).toDouble()
+                val lastRefuelPayment =
+                    lastRefuelEntity.fuelPricePerLiter * lastRefuelEntity.fuelAmount
+                return LastRefuelDetailsModel(
+                    lastRefuelDistance = lastRefuelDistance,
+                    lastRefuelFuelAverage = lastRefuelFuelAverage,
+                    lastRefuelPayment = lastRefuelPayment
+                )
+            }
+        }
+        return if (refuelList.size == 1) {
+            LastRefuelDetailsModel(
+                lastRefuelDistance = 0,
+                lastRefuelFuelAverage = 0.0,
+                lastRefuelPayment = 0.0
+
             )
         } else {
-            return RefuelingModel(
-                refuelDate = "0.0",
-                currentMileage = 0,
-                fuelAmount = 0.0,
-                fuelPricePerLiter = 0.0,
-                notes = "",
-                fillUp = false
+            LastRefuelDetailsModel(
+                lastRefuelDistance = 0,
+                lastRefuelFuelAverage = 0.0,
+                lastRefuelPayment = 0.0
+
             )
         }
     }
-
-
 }
+
+

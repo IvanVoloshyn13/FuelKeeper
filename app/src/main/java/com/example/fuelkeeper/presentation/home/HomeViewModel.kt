@@ -1,64 +1,66 @@
 package com.example.fuelkeeper.presentation.home
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.fuelkeeper.domain.models.RefuelingEntity
+import com.example.fuelkeeper.data.models.RefuelingEntity
+import com.example.fuelkeeper.domain.models.LastRefuelDetailsModel
 import com.example.fuelkeeper.domain.models.RefuelingModel
-import com.example.fuelkeeper.domain.usecase.HomeFrag.*
+import com.example.fuelkeeper.domain.models.SummaryRefuelLogModel
+import com.example.fuelkeeper.domain.usecase.HomeFrag.GetAllRefuelListUseCase
+import com.example.fuelkeeper.domain.usecase.HomeFrag.GetLastRefuelDetailUseCase
+import com.example.fuelkeeper.domain.usecase.HomeFrag.GetSummaryRefuelDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    val fuelAmountLogUseCase: GetFuelAmountLogUseCase,
-    val getAllRefuelListUseCase: GetAllRefuelListUseCase,
-    val getFuelPaymentsSumUseCase: GetFuelPaymentsSumUseCase,
-    val getSummaryDistanceUseCase: GetSummaryDistanceUseCase,
-    val getLastRefuelDetailUseCase: GetLastRefuelDetailUseCase
-
+    private val getAllRefuelListUseCase: GetAllRefuelListUseCase,
+    private val getLastRefuelDetailUseCase: GetLastRefuelDetailUseCase,
+    private val getSummaryRefuelDetailUseCase: GetSummaryRefuelDetailUseCase
 ) :
     ViewModel() {
     init {
         getAllRefuelList()
-
     }
 
-    val fuelAmountLiveData = MutableLiveData<Double>()
-    val fuelPaymentsLiveData = MutableLiveData<Double>()
-    val summaryDistanceLiveData = MutableLiveData<Int>()
-    val lastRefuelLiveData = MutableLiveData<RefuelingModel>()
+    private val _summaryRefuelDetailStateFlow = MutableStateFlow(SummaryRefuelLogModel())
+    val summaryRefuelDetailStateFlow = _summaryRefuelDetailStateFlow.asStateFlow()
+    private val _lastRefuelStateFlow = MutableStateFlow(LastRefuelDetailsModel())
+    val lastRefuelStateFlow = _lastRefuelStateFlow.asStateFlow()
     fun getAllRefuelList() {
         viewModelScope.launch {
-            getAllRefuelListUseCase.getAllRefuelList()
-            getFuelAmount()
-            getPaymentsSum()
-            getSummaryDistance()
-            getLastRefuelDetails()
+            val allRefuelLogList =
+                getAllRefuelListUseCase.getAllRefuelList() // its ArrayList <RefuelEntity>
+            val refuelList = allRefuelLogList.map { mapToRefuelingModel(it) } as ArrayList
+            getSummaryRefuelDetails(refuelList)
+            getLastRefuelDetails(refuelList)
 
         }
     }
 
-    fun getFuelAmount() {
-        val result = fuelAmountLogUseCase.getFuelAmountLog()
-        fuelAmountLiveData.postValue(result)
 
+    private fun getLastRefuelDetails(refuelList: ArrayList<RefuelingModel>) {
+        val result = getLastRefuelDetailUseCase.getLastRefuelDetails(refuelList)
+        _lastRefuelStateFlow.value = result
     }
 
-    fun getPaymentsSum() {
-        val result = getFuelPaymentsSumUseCase.getSumOfPayments()
-        fuelPaymentsLiveData.postValue(result)
+    private fun getSummaryRefuelDetails(refuelList: ArrayList<RefuelingModel>) {
+        val result = getSummaryRefuelDetailUseCase.getSummaryRefuelDetails(refuelList)
+        _summaryRefuelDetailStateFlow.value = result
     }
 
-    fun getSummaryDistance() {
-        val result = getSummaryDistanceUseCase.getSummaryDistance()
-        summaryDistanceLiveData.postValue(result)
-    }
-
-    fun getLastRefuelDetails() {
-        val result = getLastRefuelDetailUseCase.getLastRefuelDetails()
-        lastRefuelLiveData.postValue(result)
+    private fun mapToRefuelingModel(entity: RefuelingEntity): RefuelingModel {
+        return RefuelingModel(
+            refuelDate = entity.refuelDate,
+            currentMileage = entity.currentMileage,
+            fuelAmount = entity.fuelAmount,
+            fuelPricePerLiter = entity.fuelPricePerLiter,
+            notes = entity.notes,
+            fillUp = entity.fillUp
+        )
     }
 }

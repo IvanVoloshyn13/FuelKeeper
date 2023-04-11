@@ -1,7 +1,5 @@
 package com.example.fuelkeeper.domain.models
 
-import java.util.Date
-
 data class RefuelingModel(
     val refuelDate: String,
     val currentMileage: Int,

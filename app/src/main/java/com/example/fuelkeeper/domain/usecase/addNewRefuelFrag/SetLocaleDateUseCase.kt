@@ -1,4 +1,4 @@
-package com.example.fuelkeeper.domain.usecase.addNewRefueldFrag
+package com.example.fuelkeeper.domain.usecase.addNewRefuelFrag
 
 import com.example.fuelkeeper.domain.repositoryInterface.RefuelRepository
 

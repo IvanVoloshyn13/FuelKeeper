@@ -1,17 +1,17 @@
 package com.example.fuelkeeper.presentation.home
 
-import android.app.DatePickerDialog
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.fuelkeeper.R
 import com.example.fuelkeeper.databinding.FragmentHomeBinding
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.*
+import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
@@ -32,22 +32,24 @@ class HomeFragment : Fragment() {
         binding.bttAddNewRefill.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_addNewRefuelFragment)
         }
-        homeVieModel.fuelAmountLiveData.observe(viewLifecycleOwner) {
-            binding.tvSummaryFuel.text = it.toString()
-        }
-        homeVieModel.fuelPaymentsLiveData.observe(viewLifecycleOwner) {
-            binding.tvSummaryPayments.text = it.toString()
-        }
-
-        homeVieModel.summaryDistanceLiveData.observe(viewLifecycleOwner) {
-            binding.tvSummaryDistance.text = it.toString()
-        }
-        homeVieModel.lastRefuelLiveData.observe(viewLifecycleOwner) { lastRefuel ->
-            binding.apply {
-                tvLastRefuelDistance.text = lastRefuel.currentMileage.toString()
-                tvLastRefuelFuelAverage.text = lastRefuel.fuelAmount.toString()
-                tvLastRefuelPayment.text = lastRefuel.fuelPricePerLiter.toString()
+        lifecycleScope.launchWhenStarted {
+            homeVieModel.summaryRefuelDetailStateFlow.collectLatest { sumRefuelLog ->
+                binding.apply {
+                    tvSummaryDistance.text = sumRefuelLog.summaryDistance.toString()
+                    tvSummaryPayments.text = sumRefuelLog.summaryPayments.toString()
+                    tvSummaryFuel.text = sumRefuelLog.summaryFuel.toString()
+                }
             }
         }
+        lifecycleScope.launchWhenStarted {
+            homeVieModel.lastRefuelStateFlow.collectLatest { lastRefuel ->
+                binding.apply {
+                    tvLastRefuelDistance.text = "${lastRefuel.lastRefuelDistance} km"
+                    tvLastRefuelFuelAverage.text = "${lastRefuel.lastRefuelFuelAverage} l/100 km"
+                    tvLastRefuelPayment.text = "${lastRefuel.lastRefuelPayment} pln"
+                }
+            }
+        }
+
     }
 }

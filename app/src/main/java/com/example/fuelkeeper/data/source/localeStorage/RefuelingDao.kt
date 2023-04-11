@@ -1,12 +1,10 @@
 package com.example.fuelkeeper.data.source.localeStorage
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.fuelkeeper.domain.models.RefuelingEntity
+import com.example.fuelkeeper.data.models.RefuelingEntity
 
 @Dao
 interface RefuelingDao {

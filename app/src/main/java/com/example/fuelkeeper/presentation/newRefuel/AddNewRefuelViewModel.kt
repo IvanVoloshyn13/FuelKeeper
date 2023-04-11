@@ -2,11 +2,9 @@ package com.example.fuelkeeper.presentation.newRefuel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.fuelkeeper.data.repository.RefuelRepositoryImpl
-import com.example.fuelkeeper.domain.models.RefuelingEntity
 import com.example.fuelkeeper.domain.models.RefuelingModel
-import com.example.fuelkeeper.domain.usecase.addNewRefueldFrag.AddNewRefuelingUseCase
-import com.example.fuelkeeper.domain.usecase.addNewRefueldFrag.SetLocaleDateUseCase
+import com.example.fuelkeeper.domain.usecase.addNewRefuelFrag.AddNewRefuelingUseCase
+import com.example.fuelkeeper.domain.usecase.addNewRefuelFrag.SetLocaleDateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -22,7 +20,7 @@ class AddNewRefuelViewModel @Inject constructor(
 
 
     private suspend fun insertRefuel(
-        refuelEntity: RefuelingEntity
+        refuelEntity: RefuelingModel
     ): Boolean {
         return withContext(Dispatchers.IO) {
             try {
@@ -36,15 +34,7 @@ class AddNewRefuelViewModel @Inject constructor(
 
     fun addNewRefuel(refuel: RefuelingModel, callback: (Boolean) -> Unit) {
         viewModelScope.launch {
-            val refuelEntity: RefuelingEntity = RefuelingEntity(
-                refuelDate = refuel.refuelDate,
-                currentMileage = refuel.currentMileage,
-                fuelAmount = refuel.fuelAmount,
-                fuelPricePerLiter = refuel.fuelPricePerLiter,
-                notes = refuel.notes,
-                fillUp = refuel.fillUp
-            )
-            callback(insertRefuel(refuelEntity))
+            callback(insertRefuel(refuel))
         }
     }
 
