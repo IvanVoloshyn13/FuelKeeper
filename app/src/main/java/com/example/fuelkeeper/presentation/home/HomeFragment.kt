@@ -51,5 +51,11 @@ class HomeFragment : Fragment() {
             }
         }
 
+        lifecycleScope.launchWhenStarted {
+            homeVieModel.allTimeFuelAverage.collectLatest {
+                binding.tvFuelAverageDetail.text = it.toString()
+            }
+        }
+
     }
 }

@@ -4,6 +4,7 @@ import com.example.fuelkeeper.data.source.localeStorage.RefuelingDataBase
 import com.example.fuelkeeper.data.models.RefuelingEntity
 import com.example.fuelkeeper.domain.models.RefuelingModel
 import com.example.fuelkeeper.domain.repositoryInterface.RefuelRepository
+import com.example.fuelkeeper.domain.Resource
 import java.text.DateFormat
 import java.util.*
 import javax.inject.Inject
@@ -27,6 +28,14 @@ class RefuelRepositoryImpl @Inject constructor(private val db: RefuelingDataBase
         )
         val rowId = db.getRefuelingDao().addNewRefuelData(refuelingEntity)
         return rowId > 0
+    }
+
+    override suspend fun getFuelAmountLog(): List<Double> {
+        return db.getRefuelingDao().getFuelAmountLog()
+    }
+
+    override suspend fun getCurrentMileageLog(): List<Int> {
+        return db.getRefuelingDao().getCurrentMileageLog()
     }
 
 

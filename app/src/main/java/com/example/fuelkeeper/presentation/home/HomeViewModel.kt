@@ -8,6 +8,7 @@ import com.example.fuelkeeper.domain.models.LastRefuelDetailsModel
 import com.example.fuelkeeper.domain.models.RefuelingModel
 import com.example.fuelkeeper.domain.models.SummaryRefuelLogModel
 import com.example.fuelkeeper.domain.usecase.HomeFrag.GetAllRefuelListUseCase
+import com.example.fuelkeeper.domain.usecase.HomeFrag.GetAllTimeFuelAverageUseCase
 import com.example.fuelkeeper.domain.usecase.HomeFrag.GetLastRefuelDetailUseCase
 import com.example.fuelkeeper.domain.usecase.HomeFrag.GetSummaryRefuelDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,18 +21,25 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getAllRefuelListUseCase: GetAllRefuelListUseCase,
     private val getLastRefuelDetailUseCase: GetLastRefuelDetailUseCase,
-    private val getSummaryRefuelDetailUseCase: GetSummaryRefuelDetailUseCase
+    private val getSummaryRefuelDetailUseCase: GetSummaryRefuelDetailUseCase,
+    private val getAllTimeFuelAverageUseCase: GetAllTimeFuelAverageUseCase
 ) :
     ViewModel() {
     init {
         getAllRefuelList()
+        getAllTimeFuelAverage()
     }
 
     private val _summaryRefuelDetailStateFlow = MutableStateFlow(SummaryRefuelLogModel())
     val summaryRefuelDetailStateFlow = _summaryRefuelDetailStateFlow.asStateFlow()
+
     private val _lastRefuelStateFlow = MutableStateFlow(LastRefuelDetailsModel())
     val lastRefuelStateFlow = _lastRefuelStateFlow.asStateFlow()
-    fun getAllRefuelList() {
+
+    private val _allTimeFuelAverage = MutableStateFlow(0.0)
+    val allTimeFuelAverage = _allTimeFuelAverage.asStateFlow()
+
+    private fun getAllRefuelList() {
         viewModelScope.launch {
             val allRefuelLogList =
                 getAllRefuelListUseCase.getAllRefuelList() // its ArrayList <RefuelEntity>
@@ -39,6 +47,13 @@ class HomeViewModel @Inject constructor(
             getSummaryRefuelDetails(refuelList)
             getLastRefuelDetails(refuelList)
 
+        }
+    }
+
+    private fun getAllTimeFuelAverage() {
+        viewModelScope.launch {
+            val result = getAllTimeFuelAverageUseCase.getAllTimeFuelAverage()
+            _allTimeFuelAverage.value = result
         }
     }
 

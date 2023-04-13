@@ -5,6 +5,7 @@ import com.example.fuelkeeper.domain.models.SummaryRefuelLogModel
 import java.text.DecimalFormat
 
 class GetSummaryRefuelDetailUseCase {
+    private val df = DecimalFormat("#.##")
 
     fun getSummaryRefuelDetails(refuelLogList: ArrayList<RefuelingModel>): SummaryRefuelLogModel {
         val summaryDistance = getSummaryDistance(refuelLogList)
@@ -33,7 +34,6 @@ class GetSummaryRefuelDetailUseCase {
 
             }
         }
-        val df = DecimalFormat("#.##")
         return df.format(sum).toDouble()
     }
 
@@ -44,6 +44,6 @@ class GetSummaryRefuelDetailUseCase {
                 sum += element.fuelAmount
             }
         }
-        return sum
+        return df.format(sum).toDouble()
     }
 }

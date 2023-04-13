@@ -6,7 +6,7 @@ import com.example.fuelkeeper.domain.repositoryInterface.RefuelRepository
 import java.text.DecimalFormat
 import javax.inject.Inject
 
-class GetLastRefuelDetailUseCase  {
+class GetLastRefuelDetailUseCase {
 
     fun getLastRefuelDetails(refuelList: ArrayList<RefuelingModel>): LastRefuelDetailsModel {
         val df = DecimalFormat("#.##")
@@ -24,7 +24,7 @@ class GetLastRefuelDetailUseCase  {
                 return LastRefuelDetailsModel(
                     lastRefuelDistance = lastRefuelDistance,
                     lastRefuelFuelAverage = lastRefuelFuelAverage,
-                    lastRefuelPayment = lastRefuelPayment
+                    lastRefuelPayment = df.format(lastRefuelPayment).toDouble()
                 )
             }
         }
