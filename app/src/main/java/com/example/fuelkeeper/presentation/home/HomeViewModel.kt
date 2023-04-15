@@ -1,16 +1,13 @@
 package com.example.fuelkeeper.presentation.home
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fuelkeeper.data.models.RefuelingEntity
+import com.example.fuelkeeper.domain.Resource
 import com.example.fuelkeeper.domain.models.LastRefuelDetailsModel
 import com.example.fuelkeeper.domain.models.RefuelingModel
 import com.example.fuelkeeper.domain.models.SummaryRefuelLogModel
-import com.example.fuelkeeper.domain.usecase.HomeFrag.GetAllRefuelListUseCase
-import com.example.fuelkeeper.domain.usecase.HomeFrag.GetAllTimeFuelAverageUseCase
-import com.example.fuelkeeper.domain.usecase.HomeFrag.GetLastRefuelDetailUseCase
-import com.example.fuelkeeper.domain.usecase.HomeFrag.GetSummaryRefuelDetailUseCase
+import com.example.fuelkeeper.domain.usecase.HomeFrag.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,10 +16,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getAllRefuelListUseCase: GetAllRefuelListUseCase,
+    private val getRefuelListUseCase: GetRefuelListUseCase,
     private val getLastRefuelDetailUseCase: GetLastRefuelDetailUseCase,
     private val getSummaryRefuelDetailUseCase: GetSummaryRefuelDetailUseCase,
-    private val getAllTimeFuelAverageUseCase: GetAllTimeFuelAverageUseCase
+    private val getAllTimeFuelAverageUseCase: GetAllTimeFuelAverageUseCase,
+    val getSummaryDrivingCostUseCase: GetSummaryDrivingCostUseCase
 ) :
     ViewModel() {
     init {
@@ -30,42 +28,80 @@ class HomeViewModel @Inject constructor(
         getAllTimeFuelAverage()
     }
 
-    private val _summaryRefuelDetailStateFlow = MutableStateFlow(SummaryRefuelLogModel())
+    private val _summaryRefuelDetailStateFlow =
+        MutableStateFlow<Resource<SummaryRefuelLogModel>>(Resource.Loading())
     val summaryRefuelDetailStateFlow = _summaryRefuelDetailStateFlow.asStateFlow()
 
-    private val _lastRefuelStateFlow = MutableStateFlow(LastRefuelDetailsModel())
+    private val _lastRefuelStateFlow =
+        MutableStateFlow<Resource<LastRefuelDetailsModel>>(Resource.Loading())
     val lastRefuelStateFlow = _lastRefuelStateFlow.asStateFlow()
 
-    private val _allTimeFuelAverage = MutableStateFlow(0.0)
-    val allTimeFuelAverage = _allTimeFuelAverage.asStateFlow()
+    private val _allTimeFuelAverageStateFlow =
+        MutableStateFlow<Resource<Double>>(Resource.Loading())
+    val allTimeFuelAverageStateFlow = _allTimeFuelAverageStateFlow.asStateFlow()
+
+    private val _summaryDrivingCostStateFlow =
+        MutableStateFlow<Resource<Double>>(Resource.Loading())
+    val summaryDrivingCostStateFlow = _summaryDrivingCostStateFlow.asStateFlow()
 
     private fun getAllRefuelList() {
         viewModelScope.launch {
             val allRefuelLogList =
-                getAllRefuelListUseCase.getAllRefuelList() // its ArrayList <RefuelEntity>
+                getRefuelListUseCase.getRefuelList() // its ArrayList <RefuelEntity>
             val refuelList = allRefuelLogList.map { mapToRefuelingModel(it) } as ArrayList
             getSummaryRefuelDetails(refuelList)
             getLastRefuelDetails(refuelList)
+            getSummaryDrivingCost(refuelList)
 
         }
     }
 
     private fun getAllTimeFuelAverage() {
         viewModelScope.launch {
-            val result = getAllTimeFuelAverageUseCase.getAllTimeFuelAverage()
-            _allTimeFuelAverage.value = result
+            try {
+                val result = getAllTimeFuelAverageUseCase.getAllTimeFuelAverage()
+                _allTimeFuelAverageStateFlow.value = Resource.Success(result)
+            } catch (e: Exception) {
+                _allTimeFuelAverageStateFlow.value =
+                    errorMessage(e.message.toString())
+            }
         }
     }
 
 
     private fun getLastRefuelDetails(refuelList: ArrayList<RefuelingModel>) {
-        val result = getLastRefuelDetailUseCase.getLastRefuelDetails(refuelList)
-        _lastRefuelStateFlow.value = result
+        try {
+            val result = getLastRefuelDetailUseCase.getLastRefuelDetails(refuelList)
+            _lastRefuelStateFlow.value = Resource.Success(result)
+        } catch (e: Exception) {
+            _lastRefuelStateFlow.value = errorMessage(e.message.toString())
+        }
     }
 
     private fun getSummaryRefuelDetails(refuelList: ArrayList<RefuelingModel>) {
-        val result = getSummaryRefuelDetailUseCase.getSummaryRefuelDetails(refuelList)
-        _summaryRefuelDetailStateFlow.value = result
+        try {
+            val result = getSummaryRefuelDetailUseCase.getSummaryRefuelDetails(refuelList)
+            _summaryRefuelDetailStateFlow.value = Resource.Success(result)
+        } catch (e: Exception) {
+            _summaryRefuelDetailStateFlow.value =
+                errorMessage(e.message.toString())
+        }
+    }
+
+    private suspend fun getSummaryDrivingCost(
+        refuelList: ArrayList<RefuelingModel>
+    ) {
+        try {
+            val result = getSummaryDrivingCostUseCase.getAverageFuelPrice(refuelList)
+            _summaryDrivingCostStateFlow.value = Resource.Success(result)
+        } catch (e: Exception) {
+            _summaryDrivingCostStateFlow.value =
+                Resource.Error(message = e.message, data = null)
+        }
+    }
+
+    private fun <T> errorMessage(e: String): Resource.Error<T> {
+        return Resource.Error(data = null, message = e)
     }
 
     private fun mapToRefuelingModel(entity: RefuelingEntity): RefuelingModel {

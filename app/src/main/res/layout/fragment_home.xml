@@ -15,19 +15,19 @@
         android:layout_marginTop="12dp"
         android:clickable="false"
         android:text="@string/fuel_average"
-        app:layout_constraintEnd_toStartOf="@+id/total_expenses"
+        app:layout_constraintEnd_toStartOf="@+id/driving_expenses"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
     </TextView>
 
     <TextView
-        android:id="@+id/total_expenses"
+        android:id="@+id/driving_expenses"
         style="@style/homeFragmentText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="false"
-        android:text="@string/total_expenses"
+        android:text="@string/driving_expenses"
         android:textColor="@color/home_text_view_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/fuel_average"
@@ -58,9 +58,9 @@
         android:clickable="false"
         android:paddingStart="6dp"
         android:paddingEnd="6dp"
-        app:layout_constraintEnd_toEndOf="@+id/total_expenses"
-        app:layout_constraintStart_toStartOf="@+id/total_expenses"
-        app:layout_constraintTop_toBottomOf="@+id/total_expenses"
+        app:layout_constraintEnd_toEndOf="@+id/driving_expenses"
+        app:layout_constraintStart_toStartOf="@+id/driving_expenses"
+        app:layout_constraintTop_toBottomOf="@+id/driving_expenses"
         tools:text="45.62">
 
     </TextView>
@@ -93,8 +93,8 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_fuel"
         app:backgroundTint="@color/home_text_view_number_color"
-        app:layout_constraintEnd_toStartOf="@id/total_expenses"
-        app:layout_constraintStart_toEndOf="@id/fuel_average"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/total_expenses_unit">
 
     </com.google.android.material.floatingactionbutton.FloatingActionButton>
@@ -236,6 +236,18 @@
 
 
     </androidx.cardview.widget.CardView>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </ProgressBar>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

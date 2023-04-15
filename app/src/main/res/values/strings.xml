@@ -4,12 +4,12 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!-- Home Fragment text resources -->
-    <string name="fuel_average">Fuel Average</string>
-    <string name="total_expenses">Total Expenses</string>
+    <string name="fuel_average">Średnie spalanie</string>
+    <string name="driving_expenses">Koszt Jazdy</string>
     <string name="l_100_km">l/100 km</string>
     <string name="pln_100_km">PLN/100 km</string>
-    <string name="recent_refill">Recent Refill</string>
-    <string name="stat">Summary</string>
+    <string name="recent_refill">Ostatnie Tankowanie</string>
+    <string name="stat">W sumie</string>
 
     <!-- Add new refuel Fragment text resources -->
     <string name="refuel_date_hint">Data tankowania</string>
@@ -19,5 +19,8 @@
     <string name="notes_hint">Notatki...</string>
     <string name="save_btt">Zapisz</string>
     <string name="required">required</string>
+    <string name="HomeStat">Statystyki</string>
+    <string name="Register">Rejestr</string>
+    <string name="settings">Ustawienia</string>
 
 </resources>

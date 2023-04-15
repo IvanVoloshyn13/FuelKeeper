@@ -4,7 +4,7 @@ import com.example.fuelkeeper.domain.repositoryInterface.RefuelRepository
 import java.text.DecimalFormat
 import javax.inject.Inject
 
-class GetAllTimeFuelAverageUseCase @Inject constructor(val repository: RefuelRepository) {
+class GetAllTimeFuelAverageUseCase @Inject constructor(private val repository: RefuelRepository) {
 
     suspend fun getAllTimeFuelAverage(): Double {
         val df = DecimalFormat("#.##")

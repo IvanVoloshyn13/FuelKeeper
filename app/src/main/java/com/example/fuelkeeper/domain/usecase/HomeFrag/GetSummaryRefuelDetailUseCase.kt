@@ -37,7 +37,7 @@ class GetSummaryRefuelDetailUseCase {
         return df.format(sum).toDouble()
     }
 
-    private fun getSummaryFuel(refuelLogList: ArrayList<RefuelingModel>): Double {
+     fun getSummaryFuel(refuelLogList: ArrayList<RefuelingModel>): Double {
         var sum = 0.0
         if (refuelLogList.isNotEmpty()) {
             for (element in refuelLogList) {
