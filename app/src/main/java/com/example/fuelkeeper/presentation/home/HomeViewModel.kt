@@ -2,7 +2,6 @@ package com.example.fuelkeeper.presentation.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.fuelkeeper.data.models.RefuelingEntity
 import com.example.fuelkeeper.domain.Resource
 import com.example.fuelkeeper.domain.models.LastRefuelDetailsModel
 import com.example.fuelkeeper.domain.models.RefuelingModel
@@ -20,7 +19,8 @@ class HomeViewModel @Inject constructor(
     private val getLastRefuelDetailUseCase: GetLastRefuelDetailUseCase,
     private val getSummaryRefuelDetailUseCase: GetSummaryRefuelDetailUseCase,
     private val getAllTimeFuelAverageUseCase: GetAllTimeFuelAverageUseCase,
-    val getSummaryDrivingCostUseCase: GetSummaryDrivingCostUseCase
+    private val getSummaryDrivingCostUseCase: GetSummaryDrivingCostUseCase,
+    private val addNewRefuelStatUseCase: AddNewRefuelStatUseCase
 ) :
     ViewModel() {
     init {
@@ -44,14 +44,20 @@ class HomeViewModel @Inject constructor(
         MutableStateFlow<Resource<Double>>(Resource.Loading())
     val summaryDrivingCostStateFlow = _summaryDrivingCostStateFlow.asStateFlow()
 
+
+    fun addNewRefuelStat(newRefuel: RefuelingModel, newRefuelStat: LastRefuelDetailsModel) {
+        viewModelScope.launch {
+            addNewRefuelStatUseCase.addNewRefuelStat(newRefuel, newRefuelStat)
+        }
+    }
+
     private fun getAllRefuelList() {
         viewModelScope.launch {
             val allRefuelLogList =
                 getRefuelListUseCase.getRefuelList() // its ArrayList <RefuelEntity>
-            val refuelList = allRefuelLogList.map { mapToRefuelingModel(it) } as ArrayList
-            getSummaryRefuelDetails(refuelList)
-            getLastRefuelDetails(refuelList)
-            getSummaryDrivingCost(refuelList)
+            getSummaryRefuelDetails(allRefuelLogList)
+            getLastRefuelDetails(allRefuelLogList)
+            getSummaryDrivingCost(allRefuelLogList)
 
         }
     }
@@ -104,14 +110,5 @@ class HomeViewModel @Inject constructor(
         return Resource.Error(data = null, message = e)
     }
 
-    private fun mapToRefuelingModel(entity: RefuelingEntity): RefuelingModel {
-        return RefuelingModel(
-            refuelDate = entity.refuelDate,
-            currentMileage = entity.currentMileage,
-            fuelAmount = entity.fuelAmount,
-            fuelPricePerLiter = entity.fuelPricePerLiter,
-            notes = entity.notes,
-            fillUp = entity.fillUp
-        )
-    }
+
 }

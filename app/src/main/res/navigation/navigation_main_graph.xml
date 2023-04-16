@@ -7,18 +7,33 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.fuelkeeper.presentation.home.HomeFragment"
-        android:label="HomeFragment" >
+        android:label="HomeFragment">
         <action
             android:id="@+id/action_homeFragment_to_addNewRefuelFragment"
             app:destination="@id/addNewRefuelFragment" />
+        <argument
+            android:name="newRefuel"
+            android:defaultValue="@null"
+            app:argType="com.example.fuelkeeper.domain.models.RefuelingModel"
+            app:nullable="true" />
+
     </fragment>
     <fragment
         android:id="@+id/addNewRefuelFragment"
         android:name="com.example.fuelkeeper.presentation.newRefuel.AddNewRefuelFragment"
         android:label="fragment_add_new_refuel"
-        tools:layout="@layout/fragment_add_new_refuel" >
+        tools:layout="@layout/fragment_add_new_refuel">
         <action
             android:id="@+id/action_addNewRefuelFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
+            app:destination="@id/homeFragment">
+
+
+            <argument
+                android:name="newRefuel"
+                app:argType="com.example.fuelkeeper.domain.models.RefuelingModel"
+
+                app:nullable="true" />
+        </action>
+
     </fragment>
 </navigation>

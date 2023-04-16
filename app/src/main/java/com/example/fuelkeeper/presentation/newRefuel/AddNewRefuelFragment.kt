@@ -2,28 +2,35 @@ package com.example.fuelkeeper.presentation.newRefuel
 
 import android.app.DatePickerDialog
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.fuelkeeper.R
 import com.example.fuelkeeper.databinding.FragmentAddNewRefuelBinding
+import com.example.fuelkeeper.domain.models.LastRefuelDetailsModel
 import com.example.fuelkeeper.domain.models.RefuelingModel
+import com.example.fuelkeeper.presentation.home.HomeFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.DateFormat
 import java.util.*
 
+private const val LAST_REF_DATA = "LastRefuelData"
 
 @AndroidEntryPoint
 class AddNewRefuelFragment : Fragment() {
     private lateinit var binding: FragmentAddNewRefuelBinding
     private val addNewRefuelViewModel: AddNewRefuelViewModel by viewModels()
     private lateinit var datePicker: DatePickerDialog
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -52,7 +59,6 @@ class AddNewRefuelFragment : Fragment() {
             binding.fuelAmountContainer.helperText = validFuelAmount()
         }
 
-
         binding.apply {
             val data = addNewRefuelViewModel.setLocaleDate()
             etRefuelDate.setText(data)
@@ -69,8 +75,6 @@ class AddNewRefuelFragment : Fragment() {
         }
         datePicker.setOnCancelListener { binding.etRefuelDate.clearFocus() }
 
-
-
         binding.bttSave.setOnClickListener {
             if (submitForm()) {
                 createNewRefuel()
@@ -79,11 +83,6 @@ class AddNewRefuelFragment : Fragment() {
                     .show()
             }
         }
-    }
-
-
-    companion object {
-
     }
 
     private fun setDateByDatePicker() {
@@ -106,7 +105,7 @@ class AddNewRefuelFragment : Fragment() {
         val fuelPricePerLiter = binding.etFuelPrice.text.toString().toDouble()
         val notes: String? = binding.etNotes.text.toString()
         val fillUp = binding.checkbox.isChecked
-        val newRefuel = RefuelingModel(
+        var newRefuel = RefuelingModel(
             refuelDate = date,
             currentMileage = currentMileage,
             fuelAmount = fuelAmount,
@@ -114,11 +113,17 @@ class AddNewRefuelFragment : Fragment() {
             notes = notes,
             fillUp = fillUp
         )
-        addNewRefuelViewModel.addNewRefuel(newRefuel) {
-            when (it) {
+        addNewRefuelViewModel.addNewRefuel(newRefuel) { isSuccess: Boolean ->
+            when (isSuccess) {
                 true -> {
                     Toast.makeText(this.requireContext(), "Success", Toast.LENGTH_SHORT).show()
-                    findNavController().navigate(R.id.action_addNewRefuelFragment_to_homeFragment)
+                    if (newRefuel.currentMileage != 0) {
+                        val directions =
+                            AddNewRefuelFragmentDirections.actionAddNewRefuelFragmentToHomeFragment(
+                                newRefuel
+                            )
+                        findNavController().navigate(directions)
+                    }
                 }
                 else -> {
                     Toast.makeText(this.requireContext(), "Some Error", Toast.LENGTH_SHORT).show()
@@ -139,7 +144,7 @@ class AddNewRefuelFragment : Fragment() {
     private fun validFuelAmount(): String? {
         val fuelAmountText = binding.etFuelAmount.text.toString()
         if (fuelAmountText.isEmpty()) {
-            return "This field can not be empty"
+            return getString(R.string.empty_field_error)
         }
         return null
     }
@@ -155,7 +160,7 @@ class AddNewRefuelFragment : Fragment() {
     private fun validCurrentMileage(): String? {
         val currentMileageText = binding.etCurrentMileage.text.toString()
         if (currentMileageText.isEmpty()) {
-            return "This field can not be empty"
+            return getString(R.string.empty_field_error)
         }
         return null
     }
@@ -172,7 +177,7 @@ class AddNewRefuelFragment : Fragment() {
     private fun validFuelPrice(): String? {
         val fuelPriceText = binding.etFuelPrice.text.toString()
         if (fuelPriceText.isEmpty()) {
-            return "This field can not be empty"
+            return getString(R.string.empty_field_error)
         }
         return null
     }

@@ -22,5 +22,6 @@
     <string name="HomeStat">Statystyki</string>
     <string name="Register">Rejestr</string>
     <string name="settings">Ustawienia</string>
+    <string name="empty_field_error">To pole nie może być puste</string>
 
 </resources>

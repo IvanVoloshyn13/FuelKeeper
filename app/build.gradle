@@ -1,11 +1,24 @@
+buildscript {
+    repositories {
+        google()
+    }
+    dependencies {
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.5.3"
+    }
+}
+
+
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id 'androidx.navigation.safeargs'
 }
 
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.dagger.hilt.android'
+
+
 android {
     namespace 'com.example.fuelkeeper'
     compileSdk 33
@@ -19,6 +32,7 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
 
     buildTypes {
         release {
@@ -38,6 +52,7 @@ android {
     }
 }
 
+
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.7.0'
@@ -52,6 +67,7 @@ dependencies {
     def nav_version = "2.5.3"
     implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
     implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
+
 
     //ViewModel Lifecycle
     def lifecycle_version = "2.5.1"

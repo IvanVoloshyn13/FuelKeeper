@@ -29,10 +29,13 @@ class GetLastRefuelDetailUseCase {
             }
         }
         return if (refuelList.size == 1) {
+            val firstRefuelEntity = refuelList[0]
+            val lastRefuelPayment =
+                firstRefuelEntity.fuelPricePerLiter * firstRefuelEntity.fuelAmount
             LastRefuelDetailsModel(
                 lastRefuelDistance = 0,
                 lastRefuelFuelAverage = 0.0,
-                lastRefuelPayment = 0.0
+                lastRefuelPayment = lastRefuelPayment
 
             )
         } else {
@@ -40,7 +43,6 @@ class GetLastRefuelDetailUseCase {
                 lastRefuelDistance = 0,
                 lastRefuelFuelAverage = 0.0,
                 lastRefuelPayment = 0.0
-
             )
         }
     }

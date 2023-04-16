@@ -2,7 +2,9 @@ package com.example.fuelkeeper.presentation.newRefuel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.fuelkeeper.domain.models.LastRefuelDetailsModel
 import com.example.fuelkeeper.domain.models.RefuelingModel
+import com.example.fuelkeeper.domain.usecase.HomeFrag.AddNewRefuelStatUseCase
 import com.example.fuelkeeper.domain.usecase.addNewRefuelFrag.AddNewRefuelingUseCase
 import com.example.fuelkeeper.domain.usecase.addNewRefuelFrag.SetLocaleDateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,6 +17,7 @@ import javax.inject.Inject
 class AddNewRefuelViewModel @Inject constructor(
     private val addNewRefuelingUseCase: AddNewRefuelingUseCase, // must be usecase
     private val setLocaleDateUseCase: SetLocaleDateUseCase
+
 ) :
     ViewModel() {
 
@@ -37,6 +40,8 @@ class AddNewRefuelViewModel @Inject constructor(
             callback(insertRefuel(refuel))
         }
     }
+
+
 
 
     fun setLocaleDate() = setLocaleDateUseCase.setLocaleDate()

@@ -1,5 +1,6 @@
 package com.example.fuelkeeper.presentation.home
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -12,13 +13,18 @@ import androidx.navigation.fragment.findNavController
 import com.example.fuelkeeper.R
 import com.example.fuelkeeper.databinding.FragmentHomeBinding
 import com.example.fuelkeeper.domain.Resource
+import com.example.fuelkeeper.domain.models.LastRefuelDetailsModel
+import com.example.fuelkeeper.domain.models.RefuelingModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
     private val homeVieModel: HomeViewModel by viewModels()
     private lateinit var binding: FragmentHomeBinding
+    private var lastRefuelData = LastRefuelDetailsModel()
+    private lateinit var newRefuel: RefuelingModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -29,11 +35,13 @@ class HomeFragment : Fragment() {
 
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.bttAddNewRefill.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_addNewRefuelFragment)
         }
+
         lifecycleScope.launchWhenStarted {
             homeVieModel.summaryRefuelDetailStateFlow.collectLatest { sumRefuelLogResource ->
                 when (sumRefuelLogResource) {
@@ -58,9 +66,9 @@ class HomeFragment : Fragment() {
                         ).show()
                     }
                 }
-
             }
         }
+
         lifecycleScope.launchWhenStarted {
             homeVieModel.lastRefuelStateFlow.collectLatest { lastRefuelResource ->
                 when (lastRefuelResource) {
@@ -70,14 +78,18 @@ class HomeFragment : Fragment() {
                             if (data != null) {
                                 binding.apply {
                                     tvLastRefuelDistance.text = "${data.lastRefuelDistance} km"
-                                    tvLastRefuelFuelAverage.text =
-                                        "${data.lastRefuelFuelAverage} l/100 km"
+                                    tvLastRefuelFuelAverage.text = "${data.lastRefuelFuelAverage} ${getString(R.string.l_100_km)}"
                                     tvLastRefuelPayment.text = "${data.lastRefuelPayment} pln"
                                 }
+                                lastRefuelData = LastRefuelDetailsModel(
+                                    lastRefuelDistance = data.lastRefuelDistance,
+                                    lastRefuelPayment = data.lastRefuelPayment,
+                                    lastRefuelFuelAverage = data.lastRefuelFuelAverage
+                                )
                             }
+                            addNewRefuelStat()
                         }
                     }
-
                     is Resource.Loading -> binding.progressBar.visibility = View.VISIBLE
                     is Resource.Error -> {
                         binding.progressBar.visibility = View.INVISIBLE
@@ -85,10 +97,9 @@ class HomeFragment : Fragment() {
                             .show()
                     }
                 }
-
-
             }
         }
+
         lifecycleScope.launchWhenStarted {
             homeVieModel.allTimeFuelAverageStateFlow.collectLatest { fuelAverageResource ->
                 when (fuelAverageResource) {
@@ -112,6 +123,7 @@ class HomeFragment : Fragment() {
                 }
             }
         }
+
         lifecycleScope.launchWhenStarted {
             homeVieModel.summaryDrivingCostStateFlow.collectLatest { drivingCostResource ->
                 when (drivingCostResource) {
@@ -133,4 +145,31 @@ class HomeFragment : Fragment() {
             }
         }
     }
+
+    private fun addNewRefuelStat() {
+        val bundle = arguments
+        if (bundle == null) {
+            Toast.makeText(this@HomeFragment.requireContext(), "CONFIG", Toast.LENGTH_SHORT)
+                .show()
+        } else {
+            val args = HomeFragmentArgs.fromBundle(bundle)
+            if (args.newRefuel != null) {
+                args.newRefuel.let { data ->
+                    if (data != null) {
+                        newRefuel = RefuelingModel(
+                            refuelDate = data.refuelDate,
+                            currentMileage = data.currentMileage,
+                            fuelAmount = data.fuelAmount,
+                            fuelPricePerLiter = data.fuelPricePerLiter,
+                            fillUp = data.fillUp,
+                            notes = data.notes
+                        )
+                    }
+                }
+                homeVieModel.addNewRefuelStat(newRefuel = newRefuel, newRefuelStat = lastRefuelData)
+            }
+            bundle.clear()
+        }
+    }
+
 }
