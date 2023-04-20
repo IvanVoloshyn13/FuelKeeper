@@ -2,10 +2,9 @@ package com.example.fuelkeeper.presentation.newRefuel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.fuelkeeper.domain.models.LastRefuelDetailsModel
 import com.example.fuelkeeper.domain.models.RefuelingModel
-import com.example.fuelkeeper.domain.usecase.HomeFrag.AddNewRefuelStatUseCase
 import com.example.fuelkeeper.domain.usecase.addNewRefuelFrag.AddNewRefuelingUseCase
+import com.example.fuelkeeper.domain.usecase.addNewRefuelFrag.GetLastRefuelCurrentMileageUseCase
 import com.example.fuelkeeper.domain.usecase.addNewRefuelFrag.SetLocaleDateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -16,18 +15,21 @@ import javax.inject.Inject
 @HiltViewModel
 class AddNewRefuelViewModel @Inject constructor(
     private val addNewRefuelingUseCase: AddNewRefuelingUseCase, // must be usecase
-    private val setLocaleDateUseCase: SetLocaleDateUseCase
+    private val setLocaleDateUseCase: SetLocaleDateUseCase,
+    private val getLastRefuelCurrentMileageUseCase: GetLastRefuelCurrentMileageUseCase
 
 ) :
     ViewModel() {
 
 
     private suspend fun insertRefuel(
-        refuelEntity: RefuelingModel
+        newRefuel: RefuelingModel
     ): Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                addNewRefuelingUseCase.insertNewRefuel(refuelEntity)
+                val lastRefuelCurrentMileage =
+                    getLastRefuelCurrentMileageUseCase.getLastRefuelCurrentMileage()
+                addNewRefuelingUseCase.insertNewRefuel(newRefuel, lastRefuelCurrentMileage)
                 true
             } catch (e: Exception) {
                 false
@@ -40,8 +42,6 @@ class AddNewRefuelViewModel @Inject constructor(
             callback(insertRefuel(refuel))
         }
     }
-
-
 
 
     fun setLocaleDate() = setLocaleDateUseCase.setLocaleDate()

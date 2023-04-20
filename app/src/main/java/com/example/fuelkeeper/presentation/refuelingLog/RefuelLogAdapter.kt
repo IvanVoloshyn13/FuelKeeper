@@ -39,4 +39,10 @@ class RefuelLogAdapter : RecyclerView.Adapter<RefuelLogAdapter.RefuelViewHolder>
     override fun getItemCount(): Int {
         return refuelingList.size
     }
+
+    fun submitList(list: List<RefuelingStatModel>) {
+        refuelingList.clear()
+        refuelingList.addAll(list.asReversed())
+        notifyDataSetChanged()
+    }
 }

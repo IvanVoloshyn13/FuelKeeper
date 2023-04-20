@@ -3,14 +3,13 @@ package com.example.fuelkeeper.data.source.localeStorage
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.example.fuelkeeper.data.models.RefuelingEntity
-import com.example.fuelkeeper.data.models.RefuelingStatEntity
 
 @Database(
-    entities = [RefuelingEntity::class, RefuelingStatEntity::class],
+    entities = [RefuelingEntity::class],
     version = 1,
     exportSchema = false
 )
 abstract class RefuelingDataBase : RoomDatabase() {
     abstract fun getRefuelingDao(): RefuelingDao
-    abstract fun getRefuelingStatDao(): RefuelingStatDao
+
 }

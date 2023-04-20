@@ -1,12 +1,11 @@
 package com.example.fuelkeeper.di
 
-import com.example.fuelkeeper.data.repository.RefuelRepositoryImpl
-import com.example.fuelkeeper.data.repository.RefuelStatisticsRepositoryRepositoryImpl
+
+import com.example.fuelkeeper.data.repository.AddNewRefuelRepositoryImpl
+import com.example.fuelkeeper.data.repository.HomeRepositoryImpl
 import com.example.fuelkeeper.data.source.localeStorage.RefuelingDataBase
-import com.example.fuelkeeper.domain.repositoryInterface.RefuelRepository
-import com.example.fuelkeeper.domain.repositoryInterface.RefuelStatisticsRepository
-import com.example.fuelkeeper.domain.usecase.HomeFrag.GetLastRefuelDetailUseCase
-import com.example.fuelkeeper.domain.usecase.HomeFrag.GetSummaryRefuelDetailUseCase
+import com.example.fuelkeeper.domain.repositoryInterface.AddNewRefuelRepository
+import com.example.fuelkeeper.domain.repositoryInterface.HomeRepository
 import com.example.fuelkeeper.domain.usecase.addNewRefuelFrag.AddNewRefuelingUseCase
 import dagger.Module
 import dagger.Provides
@@ -20,26 +19,24 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideRefuelRepositoryImpl(dataBase: RefuelingDataBase): RefuelRepository =
-        RefuelRepositoryImpl(db = dataBase)
+    fun provideRefuelRepositoryImpl(
+        dataBase: RefuelingDataBase
+    ): AddNewRefuelRepository {
+        return AddNewRefuelRepositoryImpl(dataBase)
+    }
+
+    @Provides
+    @Singleton
+    fun provideHomeRepositoryImpl(
+        dataBase: RefuelingDataBase
+    ): HomeRepository {
+        return HomeRepositoryImpl(dataBase)
+    }
 
 
     @Provides
     @Singleton
-    fun provideRefuelStatRepositoryImpl(dataBase: RefuelingDataBase): RefuelStatisticsRepository =
-        RefuelStatisticsRepositoryRepositoryImpl(db = dataBase)
+    fun provideAddNewRefuelingUseCase(addNewRefuelRepository: AddNewRefuelRepository) =
+        AddNewRefuelingUseCase(addNewRefuelRepository = addNewRefuelRepository)
 
-
-    @Provides
-    @Singleton
-    fun provideAddNewRefuelingUseCase(refuelRepository: RefuelRepository) =
-        AddNewRefuelingUseCase(refuelRepository = refuelRepository)
-
-    @Provides
-    @Singleton
-    fun provideGetLastRefuelDetailUseCase() = GetLastRefuelDetailUseCase()
-
-    @Provides
-    @Singleton
-    fun provideGetSummaryRefuelDetailUseCase() = GetSummaryRefuelDetailUseCase()
 }

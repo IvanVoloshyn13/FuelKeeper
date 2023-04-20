@@ -4,32 +4,33 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fuelkeeper.domain.Resource
 import com.example.fuelkeeper.domain.models.LastRefuelDetailsModel
-import com.example.fuelkeeper.domain.models.RefuelingModel
-import com.example.fuelkeeper.domain.models.SummaryRefuelLogModel
-import com.example.fuelkeeper.domain.usecase.HomeFrag.*
+import com.example.fuelkeeper.domain.models.SummaryRefuelStatModel
+import com.example.fuelkeeper.domain.usecase.HomeFrag.GetAllTimeFuelAverageUseCase
+import com.example.fuelkeeper.domain.usecase.HomeFrag.GetLastRefuelDetailUseCase
+import com.example.fuelkeeper.domain.usecase.HomeFrag.GetSummaryRefuelStatUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val getRefuelListUseCase: GetRefuelListUseCase,
     private val getLastRefuelDetailUseCase: GetLastRefuelDetailUseCase,
-    private val getSummaryRefuelDetailUseCase: GetSummaryRefuelDetailUseCase,
-    private val getAllTimeFuelAverageUseCase: GetAllTimeFuelAverageUseCase,
-    private val getSummaryDrivingCostUseCase: GetSummaryDrivingCostUseCase,
-    private val addNewRefuelStatUseCase: AddNewRefuelStatUseCase
+    val getSummaryRefuelStatUseCase: GetSummaryRefuelStatUseCase,
+    val getAllTimeFuelAverageUseCase: GetAllTimeFuelAverageUseCase
 ) :
     ViewModel() {
     init {
-        getAllRefuelList()
+        getLastRefuelDetail()
+        getSummaryRefuelStat()
         getAllTimeFuelAverage()
     }
 
     private val _summaryRefuelDetailStateFlow =
-        MutableStateFlow<Resource<SummaryRefuelLogModel>>(Resource.Loading())
+        MutableStateFlow<Resource<SummaryRefuelStatModel>>(Resource.Loading())
     val summaryRefuelDetailStateFlow = _summaryRefuelDetailStateFlow.asStateFlow()
 
     private val _lastRefuelStateFlow =
@@ -44,71 +45,51 @@ class HomeViewModel @Inject constructor(
         MutableStateFlow<Resource<Double>>(Resource.Loading())
     val summaryDrivingCostStateFlow = _summaryDrivingCostStateFlow.asStateFlow()
 
-
-    fun addNewRefuelStat(newRefuel: RefuelingModel, newRefuelStat: LastRefuelDetailsModel) {
+    private fun getLastRefuelDetail() {
         viewModelScope.launch {
-            addNewRefuelStatUseCase.addNewRefuelStat(newRefuel, newRefuelStat)
+            withContext(Dispatchers.IO) {
+                kotlin.runCatching {
+                    val resource = getLastRefuelDetailUseCase.getLastRefuelDetail()
+                    _lastRefuelStateFlow.value = resource
+                }.onFailure { e: Throwable ->
+                    _lastRefuelStateFlow.value = Resource.Error(message = e.message, data = LastRefuelDetailsModel(
+                        lastRefuelDistance = 0,
+                        lastRefuelPayment = 0.0,
+                        lastRefuelFuelAverage = 0.0
+                    ))
+                }
+            }
         }
     }
 
-    private fun getAllRefuelList() {
+    private fun getSummaryRefuelStat() {
         viewModelScope.launch {
-            val allRefuelLogList =
-                getRefuelListUseCase.getRefuelList() // its ArrayList <RefuelEntity>
-            getSummaryRefuelDetails(allRefuelLogList)
-            getLastRefuelDetails(allRefuelLogList)
-            getSummaryDrivingCost(allRefuelLogList)
+            withContext(Dispatchers.IO) {
+                kotlin.runCatching {
+                    val resource = getSummaryRefuelStatUseCase.getSummaryRefuelStat()
+                    _summaryRefuelDetailStateFlow.value = resource
+                }.onFailure { e: Throwable ->
+                    _summaryRefuelDetailStateFlow.value =
+                        Resource.Error(message = e.message, data = null)
+                }
+            }
 
         }
     }
 
     private fun getAllTimeFuelAverage() {
         viewModelScope.launch {
-            try {
-                val result = getAllTimeFuelAverageUseCase.getAllTimeFuelAverage()
-                _allTimeFuelAverageStateFlow.value = Resource.Success(result)
-            } catch (e: Exception) {
-                _allTimeFuelAverageStateFlow.value =
-                    errorMessage(e.message.toString())
+            withContext(Dispatchers.IO) {
+                kotlin.runCatching {
+                    val resource = getAllTimeFuelAverageUseCase.getAllTimeFuelAverage()
+                    _allTimeFuelAverageStateFlow.value = resource
+                }.onFailure { e: Throwable ->
+                    _allTimeFuelAverageStateFlow.value =
+                        Resource.Error(message = e.message, data = null)
+                }
             }
+
         }
     }
-
-
-    private fun getLastRefuelDetails(refuelList: ArrayList<RefuelingModel>) {
-        try {
-            val result = getLastRefuelDetailUseCase.getLastRefuelDetails(refuelList)
-            _lastRefuelStateFlow.value = Resource.Success(result)
-        } catch (e: Exception) {
-            _lastRefuelStateFlow.value = errorMessage(e.message.toString())
-        }
-    }
-
-    private fun getSummaryRefuelDetails(refuelList: ArrayList<RefuelingModel>) {
-        try {
-            val result = getSummaryRefuelDetailUseCase.getSummaryRefuelDetails(refuelList)
-            _summaryRefuelDetailStateFlow.value = Resource.Success(result)
-        } catch (e: Exception) {
-            _summaryRefuelDetailStateFlow.value =
-                errorMessage(e.message.toString())
-        }
-    }
-
-    private suspend fun getSummaryDrivingCost(
-        refuelList: ArrayList<RefuelingModel>
-    ) {
-        try {
-            val result = getSummaryDrivingCostUseCase.getAverageFuelPrice(refuelList)
-            _summaryDrivingCostStateFlow.value = Resource.Success(result)
-        } catch (e: Exception) {
-            _summaryDrivingCostStateFlow.value =
-                Resource.Error(message = e.message, data = null)
-        }
-    }
-
-    private fun <T> errorMessage(e: String): Resource.Error<T> {
-        return Resource.Error(data = null, message = e)
-    }
-
 
 }

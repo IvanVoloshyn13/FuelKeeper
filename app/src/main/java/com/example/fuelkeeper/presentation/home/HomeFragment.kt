@@ -2,6 +2,7 @@ package com.example.fuelkeeper.presentation.home
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,8 +24,6 @@ import kotlinx.coroutines.flow.collectLatest
 class HomeFragment : Fragment() {
     private val homeVieModel: HomeViewModel by viewModels()
     private lateinit var binding: FragmentHomeBinding
-    private var lastRefuelData = LastRefuelDetailsModel()
-    private lateinit var newRefuel: RefuelingModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -78,23 +77,31 @@ class HomeFragment : Fragment() {
                             if (data != null) {
                                 binding.apply {
                                     tvLastRefuelDistance.text = "${data.lastRefuelDistance} km"
-                                    tvLastRefuelFuelAverage.text = "${data.lastRefuelFuelAverage} ${getString(R.string.l_100_km)}"
+                                    tvLastRefuelFuelAverage.text =
+                                        "${data.lastRefuelFuelAverage} ${getString(R.string.l_100_km)}"
                                     tvLastRefuelPayment.text = "${data.lastRefuelPayment} pln"
                                 }
-                                lastRefuelData = LastRefuelDetailsModel(
-                                    lastRefuelDistance = data.lastRefuelDistance,
-                                    lastRefuelPayment = data.lastRefuelPayment,
-                                    lastRefuelFuelAverage = data.lastRefuelFuelAverage
-                                )
                             }
-                            addNewRefuelStat()
                         }
                     }
                     is Resource.Loading -> binding.progressBar.visibility = View.VISIBLE
                     is Resource.Error -> {
                         binding.progressBar.visibility = View.INVISIBLE
-                        Toast.makeText(view.context, lastRefuelResource.message, Toast.LENGTH_SHORT)
-                            .show()
+                        lastRefuelResource.data.let { data ->
+                            binding.apply {
+                                tvLastRefuelDistance.text = "${data?.lastRefuelDistance} km"
+                                tvLastRefuelFuelAverage.text =
+                                    "${data?.lastRefuelFuelAverage} ${getString(R.string.l_100_km)}"
+                                tvLastRefuelPayment.text = "${data?.lastRefuelPayment} pln"
+                            }
+                        }
+
+                        val toast = Toast.makeText(
+                            view.context,
+                            lastRefuelResource.message,
+                            Toast.LENGTH_SHORT
+                        )
+                        toast.show()
                     }
                 }
             }
@@ -123,53 +130,28 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-
-        lifecycleScope.launchWhenStarted {
-            homeVieModel.summaryDrivingCostStateFlow.collectLatest { drivingCostResource ->
-                when (drivingCostResource) {
-                    is Resource.Success -> {
-                        drivingCostResource.data.let { data ->
-                            binding.tvTotalExpensesDetail.text = data.toString()
-                        }
-                    }
-                    is Resource.Loading -> binding.progressBar.visibility = View.VISIBLE
-                    is Resource.Error -> {
-                        binding.progressBar.visibility = View.INVISIBLE
-                        Toast.makeText(
-                            view.context,
-                            drivingCostResource.message,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-            }
-        }
+//
+//        lifecycleScope.launchWhenStarted {
+//            homeVieModel.summaryDrivingCostStateFlow.collectLatest { drivingCostResource ->
+//                when (drivingCostResource) {
+//                    is Resource.Success -> {
+//                        drivingCostResource.data.let { data ->
+//                            binding.tvTotalExpensesDetail.text = data.toString()
+//                        }
+//                    }
+//                    is Resource.Loading -> binding.progressBar.visibility = View.VISIBLE
+//                    is Resource.Error -> {
+//                        binding.progressBar.visibility = View.INVISIBLE
+//                        Toast.makeText(
+//                            view.context,
+//                            drivingCostResource.message,
+//                            Toast.LENGTH_SHORT
+//                        ).show()
+//                    }
+//                }
+//            }
+//        }
     }
 
-    private fun addNewRefuelStat() {
-        val bundle = arguments
-        if (bundle == null) {
-            Toast.makeText(this@HomeFragment.requireContext(), "CONFIG", Toast.LENGTH_SHORT)
-                .show()
-        } else {
-            val args = HomeFragmentArgs.fromBundle(bundle)
-            if (args.newRefuel != null) {
-                args.newRefuel.let { data ->
-                    if (data != null) {
-                        newRefuel = RefuelingModel(
-                            refuelDate = data.refuelDate,
-                            currentMileage = data.currentMileage,
-                            fuelAmount = data.fuelAmount,
-                            fuelPricePerLiter = data.fuelPricePerLiter,
-                            fillUp = data.fillUp,
-                            notes = data.notes
-                        )
-                    }
-                }
-                homeVieModel.addNewRefuelStat(newRefuel = newRefuel, newRefuelStat = lastRefuelData)
-            }
-            bundle.clear()
-        }
-    }
 
 }
