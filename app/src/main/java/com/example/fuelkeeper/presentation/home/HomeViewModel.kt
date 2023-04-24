@@ -5,9 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.fuelkeeper.domain.Resource
 import com.example.fuelkeeper.domain.models.LastRefuelDetailsModel
 import com.example.fuelkeeper.domain.models.SummaryRefuelStatModel
-import com.example.fuelkeeper.domain.usecase.HomeFrag.GetAllTimeFuelAverageUseCase
-import com.example.fuelkeeper.domain.usecase.HomeFrag.GetLastRefuelDetailUseCase
-import com.example.fuelkeeper.domain.usecase.HomeFrag.GetSummaryRefuelStatUseCase
+import com.example.fuelkeeper.domain.usecase.homeFrag.GetAllTimeDrivingCostUseCase
+import com.example.fuelkeeper.domain.usecase.homeFrag.GetAllTimeFuelAverageUseCase
+import com.example.fuelkeeper.domain.usecase.homeFrag.GetLastRefuelDetailUseCase
+import com.example.fuelkeeper.domain.usecase.homeFrag.GetSummaryRefuelStatUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,13 +21,15 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getLastRefuelDetailUseCase: GetLastRefuelDetailUseCase,
     val getSummaryRefuelStatUseCase: GetSummaryRefuelStatUseCase,
-    val getAllTimeFuelAverageUseCase: GetAllTimeFuelAverageUseCase
+    val getAllTimeFuelAverageUseCase: GetAllTimeFuelAverageUseCase,
+    val getAllTimeDrivingCostUseCase: GetAllTimeDrivingCostUseCase
 ) :
     ViewModel() {
     init {
         getLastRefuelDetail()
         getSummaryRefuelStat()
         getAllTimeFuelAverage()
+        getAllTimeDrivingCost()
     }
 
     private val _summaryRefuelDetailStateFlow =
@@ -41,9 +44,9 @@ class HomeViewModel @Inject constructor(
         MutableStateFlow<Resource<Double>>(Resource.Loading())
     val allTimeFuelAverageStateFlow = _allTimeFuelAverageStateFlow.asStateFlow()
 
-    private val _summaryDrivingCostStateFlow =
+    private val _allTimeDrivingCostStateFlow =
         MutableStateFlow<Resource<Double>>(Resource.Loading())
-    val summaryDrivingCostStateFlow = _summaryDrivingCostStateFlow.asStateFlow()
+    val allTimeDrivingCostStateFlow = _allTimeDrivingCostStateFlow.asStateFlow()
 
     private fun getLastRefuelDetail() {
         viewModelScope.launch {
@@ -52,11 +55,13 @@ class HomeViewModel @Inject constructor(
                     val resource = getLastRefuelDetailUseCase.getLastRefuelDetail()
                     _lastRefuelStateFlow.value = resource
                 }.onFailure { e: Throwable ->
-                    _lastRefuelStateFlow.value = Resource.Error(message = e.message, data = LastRefuelDetailsModel(
-                        lastRefuelDistance = 0,
-                        lastRefuelPayment = 0.0,
-                        lastRefuelFuelAverage = 0.0
-                    ))
+                    _lastRefuelStateFlow.value = Resource.Error(
+                        message = e.message, data = LastRefuelDetailsModel(
+                            lastRefuelDistance = 0,
+                            lastRefuelPayment = 0.0,
+                            lastRefuelFuelAverage = 0.0
+                        )
+                    )
                 }
             }
         }
@@ -85,6 +90,21 @@ class HomeViewModel @Inject constructor(
                     _allTimeFuelAverageStateFlow.value = resource
                 }.onFailure { e: Throwable ->
                     _allTimeFuelAverageStateFlow.value =
+                        Resource.Error(message = e.message, data = null)
+                }
+            }
+
+        }
+    }
+
+    private fun getAllTimeDrivingCost() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                kotlin.runCatching {
+                    val resource = getAllTimeDrivingCostUseCase.getAllTimeDrivingCost()
+                    _allTimeDrivingCostStateFlow.value = resource
+                }.onFailure { e: Throwable ->
+                    _allTimeDrivingCostStateFlow.value =
                         Resource.Error(message = e.message, data = null)
                 }
             }

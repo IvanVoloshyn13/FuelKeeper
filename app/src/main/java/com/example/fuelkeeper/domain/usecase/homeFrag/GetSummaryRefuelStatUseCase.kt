@@ -1,4 +1,4 @@
-package com.example.fuelkeeper.domain.usecase.HomeFrag
+package com.example.fuelkeeper.domain.usecase.homeFrag
 
 import com.example.fuelkeeper.domain.Resource
 import com.example.fuelkeeper.domain.models.SummaryRefuelStatModel

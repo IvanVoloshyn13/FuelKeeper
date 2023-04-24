@@ -16,7 +16,7 @@ import javax.inject.Inject
 class AddNewRefuelViewModel @Inject constructor(
     private val addNewRefuelingUseCase: AddNewRefuelingUseCase, // must be usecase
     private val setLocaleDateUseCase: SetLocaleDateUseCase,
-    private val getLastRefuelCurrentMileageUseCase: GetLastRefuelCurrentMileageUseCase
+
 
 ) :
     ViewModel() {
@@ -27,9 +27,7 @@ class AddNewRefuelViewModel @Inject constructor(
     ): Boolean {
         return withContext(Dispatchers.IO) {
             try {
-                val lastRefuelCurrentMileage =
-                    getLastRefuelCurrentMileageUseCase.getLastRefuelCurrentMileage()
-                addNewRefuelingUseCase.insertNewRefuel(newRefuel, lastRefuelCurrentMileage)
+                addNewRefuelingUseCase.insertNewRefuel(newRefuel)
                 true
             } catch (e: Exception) {
                 false

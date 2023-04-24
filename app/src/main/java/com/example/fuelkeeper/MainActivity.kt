@@ -6,7 +6,6 @@ import android.view.MenuItem
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.fuelkeeper.databinding.ActivityMainBinding
-import com.example.fuelkeeper.presentation.refuelingLog.RefuelRegisterFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -23,15 +22,18 @@ class MainActivity : AppCompatActivity() {
         binding.bottomBavMenu.setOnItemSelectedListener { it: MenuItem ->
             when (it.itemId) {
                 R.id.btt_register -> {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.main_container, RefuelRegisterFragment()).commit()
+                    navController.navigate(R.id.refuelRegisterFragment)
                     true
                 }
+                R.id.btt_home_stat -> {
+                    navController.navigate(R.id.homeFragment)
+                    true
+                }
+
                 else -> {
                     false
                 }
             }
-
 
         }
     }

@@ -1,26 +1,43 @@
 package com.example.fuelkeeper.presentation.refuelingLog
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView.OnItemClickListener
 import androidx.recyclerview.widget.RecyclerView
 import com.example.fuelkeeper.R
 import com.example.fuelkeeper.databinding.ItemRvFuelLogBinding
 import com.example.fuelkeeper.domain.models.RefuelingStatModel
 
-class RefuelLogAdapter : RecyclerView.Adapter<RefuelLogAdapter.RefuelViewHolder>() {
+class RefuelLogAdapter(val listener: OnItemClickListener) :
+    RecyclerView.Adapter<RefuelLogAdapter.RefuelViewHolder>() {
 
     private val refuelingList = ArrayList<RefuelingStatModel>()
 
     inner class RefuelViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val binding = ItemRvFuelLogBinding.bind(itemView)
+
+        @SuppressLint("SetTextI18n")
         fun bind(data: RefuelingStatModel) {
             binding.apply {
-                tvCurrentMileage.text = data.currentMileage.toString()
+                tvCurrentMileage.text =
+                    "${data.currentMileage}  ${ itemView.context.getString(R.string.km)} "
                 tvRefuelDate.text = data.refuelDate
-                tvFuelAverage.text = data.fuelAverage.toString()
-                tvMileageOnLastRefuel.text = data.lastRefuelDistance.toString()
-                tvLastRefuelPrice.text = data.refuelPayment.toString()
+                tvFuelAverage.text = data.fuelAverage
+                tvMileageOnLastRefuel.text =
+                    data.lastRefuelDistance.toString()  + itemView.context.getString(R.string.km)
+                tvLastRefuelPrice.text =
+                    data.refuelPayment + itemView.context.getString(R.string.pln)
+
+            }
+            itemView.setOnClickListener {
+                data.id.let { itemId ->
+                    if (itemId != null) {
+                        listener.onItemClick(itemId = itemId.toInt())
+                    }
+
+                }
 
             }
         }
@@ -44,5 +61,9 @@ class RefuelLogAdapter : RecyclerView.Adapter<RefuelLogAdapter.RefuelViewHolder>
         refuelingList.clear()
         refuelingList.addAll(list.asReversed())
         notifyDataSetChanged()
+    }
+
+    interface OnItemClickListener {
+        fun onItemClick(itemId: Int)
     }
 }

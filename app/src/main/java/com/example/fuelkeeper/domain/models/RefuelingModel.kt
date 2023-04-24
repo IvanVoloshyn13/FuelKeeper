@@ -7,4 +7,4 @@ data class RefuelingModel(
     val fuelPricePerLiter: Double,
     val notes: String? = null,
     val fillUp: Boolean
-) : java.io.Serializable
+)

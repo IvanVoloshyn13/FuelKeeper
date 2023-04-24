@@ -10,16 +10,13 @@ import javax.inject.Inject
 
 class AddNewRefuelRepositoryImpl @Inject constructor(
     private val db: RefuelingDataBase
-) :
-    AddNewRefuelRepository {
-
-
+) : AddNewRefuelRepository {
     //AddNewRefuelFragment
+
     override suspend fun addNewRefuelLog(
-        newRefuel: RefuelingModel,
-        lastRefuelMileage: Int
+        newRefuel: RefuelingModel
     ): Boolean {
-        val refuelingEntity = mapToRefuelingEntity(newRefuel, lastRefuelMileage)
+        val refuelingEntity = mapToRefuelingEntity(newRefuel)
         val rowId = db.getRefuelingDao().addNewRefuelData(refuelingEntity)
         return rowId > 0
     }
@@ -34,55 +31,20 @@ class AddNewRefuelRepositoryImpl @Inject constructor(
     }
 
 
-    override suspend fun getAllRefuelLog(): ArrayList<RefuelingModel> {
-        TODO("Not yet implemented")
-    }
 
     private fun mapToRefuelingEntity(
-        newRefuel: RefuelingModel,
-        lastRefuelMileage: Int
+        newRefuel: RefuelingModel
     ): RefuelingEntity {
-        val refuelPayment = newRefuel.fuelAmount * newRefuel.fuelPricePerLiter
-        if (lastRefuelMileage == 0) {
             return RefuelingEntity(
                 refuelDate = newRefuel.refuelDate,
                 currentMileage = newRefuel.currentMileage,
                 fuelAmount = newRefuel.fuelAmount,
                 fuelPricePerLiter = newRefuel.fuelPricePerLiter,
-                refuelPayment = refuelPayment,
-                lastRefuelDistance = 0,
-                fuelAverage = 0.0,
-                notes = newRefuel.notes,
-                fillUp = newRefuel.fillUp
-            )
-        } else {
-            val distanceOnLastRefuel = newRefuel.currentMileage - lastRefuelMileage
-            val fuelAverage =
-                formatDouble(newRefuel.fuelAmount / distanceOnLastRefuel * 100).toDouble()
-            return RefuelingEntity(
-                refuelDate = newRefuel.refuelDate,
-                currentMileage = newRefuel.currentMileage,
-                fuelAmount = newRefuel.fuelAmount,
-                fuelPricePerLiter = newRefuel.fuelPricePerLiter,
-                refuelPayment = refuelPayment,
-                lastRefuelDistance = distanceOnLastRefuel,
-                fuelAverage = fuelAverage,
                 notes = newRefuel.notes,
                 fillUp = newRefuel.fillUp
             )
         }
-    }
 
-    private fun mapToRefuelingModel(entity: RefuelingEntity): RefuelingModel {
-        return RefuelingModel(
-            refuelDate = entity.refuelDate,
-            currentMileage = entity.currentMileage,
-            fuelAmount = entity.fuelAmount,
-            fuelPricePerLiter = entity.fuelPricePerLiter,
-            notes = entity.notes,
-            fillUp = entity.fillUp
-        )
-    }
 
     override fun setLocaleDate(): String {
         val locale = Locale.getDefault()

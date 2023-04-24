@@ -7,11 +7,10 @@ import javax.inject.Inject
 class AddNewRefuelingUseCase @Inject constructor(val addNewRefuelRepository: AddNewRefuelRepository) {
 
     suspend fun insertNewRefuel(
-        newRefuel: RefuelingModel,
-        lastRefuelMileage: Int
+        newRefuel: RefuelingModel
+
     ) =
         addNewRefuelRepository.addNewRefuelLog(
-            newRefuel = newRefuel,
-            lastRefuelMileage = lastRefuelMileage
+            newRefuel = newRefuel
         )
 }

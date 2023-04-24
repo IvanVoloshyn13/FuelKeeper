@@ -1,48 +1,69 @@
-package com.example.fuelkeeper.presentation.newRefuel
+package com.example.fuelkeeper.presentation.edit
 
-import android.app.DatePickerDialog
 import android.content.Context
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.fuelkeeper.R
-import com.example.fuelkeeper.databinding.FragmentAddNewRefuelBinding
+import com.example.fuelkeeper.databinding.FragmentEditRefuelItemBinding
 import com.example.fuelkeeper.domain.models.RefuelingModel
 import dagger.hilt.android.AndroidEntryPoint
-import java.text.DateFormat
-import java.util.*
-
+import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
-class AddNewRefuelFragment : Fragment() {
-    private lateinit var binding: FragmentAddNewRefuelBinding
-    private val addNewRefuelViewModel: AddNewRefuelViewModel by viewModels()
-    private lateinit var datePicker: DatePickerDialog
-
-
+class EditRefuelItemFragment : Fragment() {
+    private val editRefuelViewModel: EditRefuelViewModel by viewModels()
+    private lateinit var binding: FragmentEditRefuelItemBinding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         // Inflate the layout for this fragment
-        binding = FragmentAddNewRefuelBinding.inflate(inflater, container, false)
-        datePicker = DatePickerDialog(requireContext())
+        binding = FragmentEditRefuelItemBinding.inflate(inflater)
+        val bundle = arguments
+        val args = bundle?.let { EditRefuelItemFragmentArgs.fromBundle(it) }
+        args?.refuelItemId.let { itemId ->
+            if (itemId != null)
+                editRefuelViewModel.getRefuelById(itemId)
+        }
+        bundle?.clear()
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fuelAmountFocusListener()
-        currentMileageFocusListener()
-        fuelPriceFocusListener()
-        binding.etRefuelDate.showSoftInputOnFocus = false
 
+        lifecycleScope.launchWhenStarted {
+            editRefuelViewModel.refuelSharedFlow.collectLatest { refuelItemResource ->
+                binding.apply {
+                    refuelItemResource.data.let { refuelItem ->
+                        if (refuelItem != null) {
+                        etCurrentMileage.setText(refuelItem.currentMileage.toString())
+                            etFuelAmount.setText(refuelItem.fuelAmount.toString())
+                            etRefuelDate.setText(refuelItem.refuelDate)
+                            etFuelPrice.setText(refuelItem.fuelPricePerLiter.toString())
+                            etNotes.setText(refuelItem.notes)
+                            checkbox.isChecked = refuelItem.fillUp
+                        }
+                    }
+                }
+            }
+        }
+
+
+        fuelAmountFocusListener()
+        fuelPriceFocusListener()
+        currentMileageFocusListener()
+
+        binding.etRefuelDate.showSoftInputOnFocus = false
         val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         binding.root.setOnClickListener {
             imm.hideSoftInputFromWindow(
@@ -54,75 +75,15 @@ class AddNewRefuelFragment : Fragment() {
             binding.fuelAmountContainer.helperText = validFuelAmount()
         }
 
-        binding.apply {
-            val data = addNewRefuelViewModel.setLocaleDate()
-            etRefuelDate.setText(data)
-            etRefuelDate.setOnFocusChangeListener { view, hasFocus ->
-                if (hasFocus) {
-                    datePicker.show()
-                    setDateByDatePicker()
-                    imm.hideSoftInputFromWindow(
-                        etRefuelDate.applicationWindowToken,
-                        InputMethodManager.HIDE_NOT_ALWAYS
-                    )
-                }
-            }
-        }
-        datePicker.setOnCancelListener { binding.etRefuelDate.clearFocus() }
-
         binding.bttSave.setOnClickListener {
             if (submitForm()) {
-                createNewRefuel()
-            } else {
-                Toast.makeText(this.context, "Please complete all fields ", Toast.LENGTH_SHORT)
-                    .show()
+                updateRefuel()
             }
         }
+
     }
 
-    private fun setDateByDatePicker() {
-        var formattedDate: String
-        val locale = Locale.getDefault()
-        val calendar = Calendar.getInstance()
-        datePicker.setOnDateSetListener { datePicker, year, month, dayOfMonth ->
-            calendar.set(year, month, dayOfMonth)
-            val dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale)
-            formattedDate = dateFormat.format(calendar.time)
-            binding.etRefuelDate.setText(formattedDate)
-
-        }
-    }
-
-    private fun createNewRefuel() {
-        val date = binding.etRefuelDate.text.toString()
-        val currentMileage = binding.etCurrentMileage.text.toString().toInt()
-        val fuelAmount = binding.etFuelAmount.text.toString().toDouble()
-        val fuelPricePerLiter = binding.etFuelPrice.text.toString().toDouble()
-        val notes: String? = binding.etNotes.text.toString()
-        val fillUp = binding.checkbox.isChecked
-        var newRefuel = RefuelingModel(
-            refuelDate = date,
-            currentMileage = currentMileage,
-            fuelAmount = fuelAmount,
-            fuelPricePerLiter = fuelPricePerLiter,
-            notes = notes,
-            fillUp = fillUp
-        )
-        addNewRefuelViewModel.addNewRefuel(newRefuel) { isSuccess: Boolean ->
-            when (isSuccess) {
-                true -> {
-                    Toast.makeText(this.requireContext(), "Success", Toast.LENGTH_SHORT).show()
-                    findNavController().navigate(R.id.action_addNewRefuelFragment_to_homeFragment)
-                }
-                else -> {
-                    Toast.makeText(this.requireContext(), "Some Error", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }
-
-
-   private fun fuelAmountFocusListener() {
+    private fun fuelAmountFocusListener() {
         binding.etFuelAmount.setOnFocusChangeListener { view, focused ->
             if (!focused) {
                 binding.fuelAmountContainer.helperText = validFuelAmount()
@@ -184,7 +145,33 @@ class AddNewRefuelFragment : Fragment() {
         }
         return false
     }
+
+    private fun updateRefuel() {
+        val date = binding.etRefuelDate.text.toString()
+        val currentMileage = binding.etCurrentMileage.text.toString().toInt()
+        val fuelAmount = binding.etFuelAmount.text.toString().toDouble()
+        val fuelPricePerLiter = binding.etFuelPrice.text.toString().toDouble()
+        val notes: String? = binding.etNotes.text.toString()
+        val fillUp = binding.checkbox.isChecked
+        val newRefuel = RefuelingModel(
+            refuelDate = date,
+            currentMileage = currentMileage,
+            fuelAmount = fuelAmount,
+            fuelPricePerLiter = fuelPricePerLiter,
+            notes = notes,
+            fillUp = fillUp
+        )
+        editRefuelViewModel.updateRefuel(newRefuel) { isSuccess: Boolean ->
+            when (isSuccess) {
+                true -> {
+                    Toast.makeText(this.requireContext(), "Success", Toast.LENGTH_SHORT).show()
+                    findNavController().navigate(R.id.action_editRefuelItemFragment_to_homeFragment)
+                }
+                else -> {
+                    Toast.makeText(this.requireContext(), "Some Error", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
 }
-
-
-

@@ -8,5 +8,6 @@ interface HomeRepository {
     suspend fun getLastRefuelDetail(): Resource<LastRefuelDetailsModel>
     suspend fun getSummaryRefuelStatDetail(): Resource<SummaryRefuelStatModel>
     suspend fun getAllTimeFuelAverage(): Resource<Double>
+    suspend fun getAllTimeDrivingCost(): Resource<Double>
 }
 

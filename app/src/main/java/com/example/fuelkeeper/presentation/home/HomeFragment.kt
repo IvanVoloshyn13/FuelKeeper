@@ -2,7 +2,6 @@ package com.example.fuelkeeper.presentation.home
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,8 +13,6 @@ import androidx.navigation.fragment.findNavController
 import com.example.fuelkeeper.R
 import com.example.fuelkeeper.databinding.FragmentHomeBinding
 import com.example.fuelkeeper.domain.Resource
-import com.example.fuelkeeper.domain.models.LastRefuelDetailsModel
-import com.example.fuelkeeper.domain.models.RefuelingModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 
@@ -29,7 +26,7 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        binding = FragmentHomeBinding.inflate(inflater)
+        binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
 
     }
@@ -78,7 +75,7 @@ class HomeFragment : Fragment() {
                                 binding.apply {
                                     tvLastRefuelDistance.text = "${data.lastRefuelDistance} km"
                                     tvLastRefuelFuelAverage.text =
-                                        "${data.lastRefuelFuelAverage} ${getString(R.string.l_100_km)}"
+                                        "${data.lastRefuelFuelAverage} ${getString(R.string.l_100_km)} "
                                     tvLastRefuelPayment.text = "${data.lastRefuelPayment} pln"
                                 }
                             }
@@ -130,27 +127,27 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-//
-//        lifecycleScope.launchWhenStarted {
-//            homeVieModel.summaryDrivingCostStateFlow.collectLatest { drivingCostResource ->
-//                when (drivingCostResource) {
-//                    is Resource.Success -> {
-//                        drivingCostResource.data.let { data ->
-//                            binding.tvTotalExpensesDetail.text = data.toString()
-//                        }
-//                    }
-//                    is Resource.Loading -> binding.progressBar.visibility = View.VISIBLE
-//                    is Resource.Error -> {
-//                        binding.progressBar.visibility = View.INVISIBLE
-//                        Toast.makeText(
-//                            view.context,
-//                            drivingCostResource.message,
-//                            Toast.LENGTH_SHORT
-//                        ).show()
-//                    }
-//                }
-//            }
-//        }
+
+        lifecycleScope.launchWhenStarted {
+            homeVieModel.allTimeDrivingCostStateFlow.collectLatest { drivingCostResource ->
+                when (drivingCostResource) {
+                    is Resource.Success -> {
+                        drivingCostResource.data.let { data ->
+                            binding.tvTotalExpensesDetail.text = data.toString()
+                        }
+                    }
+                    is Resource.Loading -> binding.progressBar.visibility = View.VISIBLE
+                    is Resource.Error -> {
+                        binding.progressBar.visibility = View.INVISIBLE
+                        Toast.makeText(
+                            view.context,
+                            drivingCostResource.message,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+        }
     }
 
 

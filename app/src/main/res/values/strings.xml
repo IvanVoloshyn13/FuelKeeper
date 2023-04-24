@@ -24,4 +24,8 @@
     <string name="settings">Ustawienia</string>
     <string name="empty_field_error">To pole nie może być puste</string>
 
+    <!-- Refuel Register Fragment text resources -->
+    <string name="km"> km</string>
+    <string name="pln"> pln</string>
+
 </resources>
