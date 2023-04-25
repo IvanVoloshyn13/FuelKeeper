@@ -1,28 +1,26 @@
 package com.example.fuelkeeper.presentation.refuelingLog
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView.VERTICAL
-import com.example.fuelkeeper.R
 import com.example.fuelkeeper.databinding.FragmentRefuelRegisterBinding
 import com.example.fuelkeeper.domain.Resource
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
-class RefuelRegisterFragment : Fragment(), RefuelLogAdapter.OnItemClickListener {
-    private var refuelSharedFlowJob: Job? = null
-    val refuelRegViewModel: RefuelRegisterViewModel by viewModels()
+class RefuelRegisterFragment : Fragment(), RefuelLogAdapter.OnItemClickListener,
+    RefuelLogAdapter.OnDeleteBttClickListener {
+    private val refuelRegViewModel: RefuelRegisterViewModel by viewModels()
     private lateinit var binding: FragmentRefuelRegisterBinding
     private lateinit var adapter: RefuelLogAdapter
     override fun onCreateView(
@@ -49,10 +47,8 @@ class RefuelRegisterFragment : Fragment(), RefuelLogAdapter.OnItemClickListener 
                     }
                     is Resource.Error -> {}
                 }
-
             }
         }
-
 
 
     }
@@ -63,6 +59,7 @@ class RefuelRegisterFragment : Fragment(), RefuelLogAdapter.OnItemClickListener 
             this@RefuelRegisterFragment.requireContext(),
             VERTICAL, false
         )
+        adapter.onDeleteBttClickListener = this
     }
 
     override fun onItemClick(itemId: Int) {
@@ -71,6 +68,15 @@ class RefuelRegisterFragment : Fragment(), RefuelLogAdapter.OnItemClickListener 
                 itemId
             )
         findNavController().navigate(directions)
+    }
+
+    override fun onDeleteClick(itemId: Int) {
+        Snackbar.make(this.requireView(), "Delete Item?", Snackbar.LENGTH_LONG)
+            .setAction("Confirm") {
+                refuelRegViewModel.deleteRefuelItem(itemId)
+                Toast.makeText(this.requireContext(), "Delete successful", Toast.LENGTH_SHORT)
+                    .show()
+            }.show()
     }
 
 

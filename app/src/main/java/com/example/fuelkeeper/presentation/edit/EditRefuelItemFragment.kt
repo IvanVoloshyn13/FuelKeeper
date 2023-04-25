@@ -16,9 +16,11 @@ import com.example.fuelkeeper.databinding.FragmentEditRefuelItemBinding
 import com.example.fuelkeeper.domain.models.RefuelingModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class EditRefuelItemFragment : Fragment() {
+    private var _refuelId: Int? = null
     private val editRefuelViewModel: EditRefuelViewModel by viewModels()
     private lateinit var binding: FragmentEditRefuelItemBinding
     override fun onCreateView(
@@ -30,8 +32,10 @@ class EditRefuelItemFragment : Fragment() {
         val bundle = arguments
         val args = bundle?.let { EditRefuelItemFragmentArgs.fromBundle(it) }
         args?.refuelItemId.let { itemId ->
-            if (itemId != null)
+            if (itemId != null) {
                 editRefuelViewModel.getRefuelById(itemId)
+                _refuelId = itemId
+            }
         }
         bundle?.clear()
 
@@ -46,7 +50,7 @@ class EditRefuelItemFragment : Fragment() {
                 binding.apply {
                     refuelItemResource.data.let { refuelItem ->
                         if (refuelItem != null) {
-                        etCurrentMileage.setText(refuelItem.currentMileage.toString())
+                            etCurrentMileage.setText(refuelItem.currentMileage.toString())
                             etFuelAmount.setText(refuelItem.fuelAmount.toString())
                             etRefuelDate.setText(refuelItem.refuelDate)
                             etFuelPrice.setText(refuelItem.fuelPricePerLiter.toString())
@@ -57,7 +61,6 @@ class EditRefuelItemFragment : Fragment() {
                 }
             }
         }
-
 
         fuelAmountFocusListener()
         fuelPriceFocusListener()
@@ -80,7 +83,6 @@ class EditRefuelItemFragment : Fragment() {
                 updateRefuel()
             }
         }
-
     }
 
     private fun fuelAmountFocusListener() {
@@ -147,6 +149,7 @@ class EditRefuelItemFragment : Fragment() {
     }
 
     private fun updateRefuel() {
+        val refuelId = _refuelId
         val date = binding.etRefuelDate.text.toString()
         val currentMileage = binding.etCurrentMileage.text.toString().toInt()
         val fuelAmount = binding.etFuelAmount.text.toString().toDouble()
@@ -154,6 +157,7 @@ class EditRefuelItemFragment : Fragment() {
         val notes: String? = binding.etNotes.text.toString()
         val fillUp = binding.checkbox.isChecked
         val newRefuel = RefuelingModel(
+            id = refuelId,
             refuelDate = date,
             currentMileage = currentMileage,
             fuelAmount = fuelAmount,

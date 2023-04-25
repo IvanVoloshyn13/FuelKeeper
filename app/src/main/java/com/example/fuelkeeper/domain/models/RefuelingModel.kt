@@ -1,6 +1,7 @@
 package com.example.fuelkeeper.domain.models
 
 data class RefuelingModel(
+    val id: Int? = null,
     val refuelDate: String,
     val currentMileage: Int,
     val fuelAmount: Double,

@@ -41,9 +41,11 @@ class AddNewRefuelFragment : Fragment() {
         fuelAmountFocusListener()
         currentMileageFocusListener()
         fuelPriceFocusListener()
+
         binding.etRefuelDate.showSoftInputOnFocus = false
 
         val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
         binding.root.setOnClickListener {
             imm.hideSoftInputFromWindow(
                 it.applicationWindowToken,
@@ -53,6 +55,8 @@ class AddNewRefuelFragment : Fragment() {
             binding.fuelPriceContainer.helperText = validFuelPrice()
             binding.fuelAmountContainer.helperText = validFuelAmount()
         }
+
+        datePicker.setOnCancelListener { binding.etRefuelDate.clearFocus() }
 
         binding.apply {
             val data = addNewRefuelViewModel.setLocaleDate()
@@ -68,7 +72,6 @@ class AddNewRefuelFragment : Fragment() {
                 }
             }
         }
-        datePicker.setOnCancelListener { binding.etRefuelDate.clearFocus() }
 
         binding.bttSave.setOnClickListener {
             if (submitForm()) {
@@ -89,7 +92,6 @@ class AddNewRefuelFragment : Fragment() {
             val dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale)
             formattedDate = dateFormat.format(calendar.time)
             binding.etRefuelDate.setText(formattedDate)
-
         }
     }
 

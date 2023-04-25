@@ -4,9 +4,6 @@ import com.example.fuelkeeper.domain.models.RefuelingModel
 
 interface AddNewRefuelRepository {
 
-    suspend fun addNewRefuelLog(
-        newRefuel: RefuelingModel
-    ): Boolean
-    suspend fun getLastRefuelCurrentMileage(): Int
+    suspend fun addNewRefuelLog(newRefuel: RefuelingModel): Boolean
     fun setLocaleDate(): String
 }

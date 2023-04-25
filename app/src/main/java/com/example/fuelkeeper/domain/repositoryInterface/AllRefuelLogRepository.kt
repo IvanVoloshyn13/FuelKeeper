@@ -7,6 +7,6 @@ import com.example.fuelkeeper.domain.models.RefuelingStatModel
 interface AllRefuelLogRepository {
 
     suspend fun getAllRefuelLog(): Resource<List<RefuelingStatModel>>
-    suspend fun deleteRefuelLog(id: Int): Boolean
+    suspend fun deleteRefuelLog(id: Int)
 
 }

@@ -11,7 +11,6 @@ import javax.inject.Inject
 class AddNewRefuelRepositoryImpl @Inject constructor(
     private val db: RefuelingDataBase
 ) : AddNewRefuelRepository {
-    //AddNewRefuelFragment
 
     override suspend fun addNewRefuelLog(
         newRefuel: RefuelingModel
@@ -20,17 +19,6 @@ class AddNewRefuelRepositoryImpl @Inject constructor(
         val rowId = db.getRefuelingDao().addNewRefuelData(refuelingEntity)
         return rowId > 0
     }
-
-    override suspend fun getLastRefuelCurrentMileage(): Int {
-        var result: Int = try {
-            db.getRefuelingDao().getLastCurrentMileage()
-        } catch (e: Exception) {
-            0
-        }
-        return result
-    }
-
-
 
     private fun mapToRefuelingEntity(
         newRefuel: RefuelingModel
@@ -45,7 +33,6 @@ class AddNewRefuelRepositoryImpl @Inject constructor(
             )
         }
 
-
     override fun setLocaleDate(): String {
         val locale = Locale.getDefault()
         val dateTime = DateFormat.getDateInstance(DateFormat.DEFAULT, locale)
@@ -55,10 +42,5 @@ class AddNewRefuelRepositoryImpl @Inject constructor(
         return formattedDate
     }
 
-    fun formatDouble(number: Double): String {
-        if (number != null) {
-            return String.format("%.2f", number)
-        } else return "0.0"
-    }
 
 }

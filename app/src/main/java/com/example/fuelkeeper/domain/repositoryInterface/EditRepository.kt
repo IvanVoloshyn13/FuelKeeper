@@ -4,5 +4,5 @@ import com.example.fuelkeeper.domain.models.RefuelingModel
 
 interface EditRepository {
     suspend fun getRefuelById(id: Int): RefuelingModel?
-  suspend fun updateRefuel(refuel:RefuelingModel): Boolean
+    suspend fun updateRefuel(refuel: RefuelingModel): Boolean
 }

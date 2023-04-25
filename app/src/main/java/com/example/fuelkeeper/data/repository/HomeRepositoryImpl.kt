@@ -47,59 +47,60 @@ class HomeRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getSummaryRefuelStatDetail(): Resource<SummaryRefuelStatModel> {
-        val refuelAmountSum = getSummaryFuelAmount()
-        val refuelPaymentsSum = getSummaryPayments()
-        val summaryDistance = getSummaryDistance()
-        val summaryStat = SummaryRefuelStatModel(
-            summaryPayments = refuelPaymentsSum,
-            summaryDistance = summaryDistance,
-            summaryFuel = refuelAmountSum
-        )
-        return Resource.Success(summaryStat)
+    override suspend fun getSummaryRefuelStatDetail(): Resource<SummaryRefuelStatModel> =
+        withContext(Dispatchers.Default) {
+            val refuelAmountSum = getSummaryFuelAmount()
+            val refuelPaymentsSum = getSummaryPayments()
+            val summaryDistance = getSummaryDistance()
+            val summaryStat = SummaryRefuelStatModel(
+                summaryPayments = refuelPaymentsSum,
+                summaryDistance = summaryDistance,
+                summaryFuel = refuelAmountSum
+            )
+            return@withContext Resource.Success(summaryStat)
 
-    }
+        }
 
-    override suspend fun getAllTimeFuelAverage(): Resource<Double> {
+    override suspend fun getAllTimeFuelAverage(): Resource<Double> = withContext(Dispatchers.IO) {
         if (getSummaryDistance() != 0 && db.getRefuelingDao()
                 .getRefuelingRegisterTableCount() > 2
         ) {
             val fuelAmountSum = getFuelAmountSum() - getFirstFuelAmount()
             val allTimeFuelAverage =
                 formatDouble(fuelAmountSum / getSummaryDistance() * 100).toDouble()
-            return Resource.Success(allTimeFuelAverage)
+            return@withContext Resource.Success(allTimeFuelAverage)
         } else if (getSummaryDistance() != 0 && db.getRefuelingDao()
                 .getRefuelingRegisterTableCount() == 2
         ) {
-            return Resource.Success(getLastRefuelDetail().data?.lastRefuelFuelAverage)
-        } else return Resource.Success(0.0)
+            return@withContext Resource.Success(getLastRefuelDetail().data?.lastRefuelFuelAverage)
+        } else return@withContext Resource.Success(0.0)
     }
+
+    override suspend fun getAllTimeDrivingCost(): Resource<Double> =
+        withContext(Dispatchers.Default) {
+            val allTimeFuelAverage = getAllTimeFuelAverage().data
+            val allTimeFuelPricePerLiterAverage = getAllTimeFuelPricePerLiterAverage()
+            if (allTimeFuelAverage != null) {
+                val allTimeDrivingCost =
+                    formatDouble(allTimeFuelAverage * allTimeFuelPricePerLiterAverage).toDouble()
+                return@withContext Resource.Success(allTimeDrivingCost)
+            } else return@withContext Resource.Success(0.0)
+        }
 
     private suspend fun getFirstFuelAmount(): Double {
         return db.getRefuelingDao().getFirstFuelAmount()
     }
 
-    override suspend fun getAllTimeDrivingCost(): Resource<Double> {
-        val allTimeFuelAverage = getAllTimeFuelAverage().data
-        val allTimeFuelPricePerLiterAverage = getAllTimeFuelPricePerLiterAverage()
-        if (allTimeFuelAverage != null) {
-            val allTimeDrivingCost =
-                formatDouble(allTimeFuelAverage * allTimeFuelPricePerLiterAverage).toDouble()
-            return Resource.Success(allTimeDrivingCost)
-        } else return Resource.Success(0.0)
-    }
-
-    private suspend fun getAllTimeFuelPricePerLiterAverage(): Double= withContext(Dispatchers.IO) {
+    private suspend fun getAllTimeFuelPricePerLiterAverage(): Double {
         if (db.getRefuelingDao().getSumFuelPricePerLiter() != null) {
             val count = db.getRefuelingDao().getRefuelingRegisterTableCount()
             val fuelPricePerLiterSum = db.getRefuelingDao().getSumFuelPricePerLiter()
-            return@withContext formatDouble(fuelPricePerLiterSum / count).toDouble()
-        } else return@withContext 0.0
+            return formatDouble(fuelPricePerLiterSum / count).toDouble()
+        } else return 0.0
     }
 
-
-    private suspend fun getSummaryDistance(): Int=withContext(Dispatchers.IO) {
-        return@withContext if (db.getRefuelingDao().getFirstCurrentMileage() != null && db.getRefuelingDao()
+    private suspend fun getSummaryDistance(): Int {
+        return if (db.getRefuelingDao().getFirstCurrentMileage() != null && db.getRefuelingDao()
                 .getLastCurrentMileage() != null
         ) {
             val firstMileage = db.getRefuelingDao().getFirstCurrentMileage()
@@ -111,15 +112,15 @@ class HomeRepositoryImpl @Inject constructor(
         } else 0
     }
 
-    private suspend fun getFuelAmountSum(): Double= withContext(Dispatchers.IO) {
+    private suspend fun getFuelAmountSum(): Double {
         db.getRefuelingDao().getSumFuelAmount().let { sumFuelAmount ->
             if (sumFuelAmount != null)
-                return@let formatDouble(sumFuelAmount).toDouble()
-            else return@let 0.0
+                return formatDouble(sumFuelAmount).toDouble()
+            else return 0.0
         }
     }
 
-    private suspend fun getSummaryPayments(): Double=withContext(Dispatchers.IO) {
+    private suspend fun getSummaryPayments(): Double {
         val allRefuelLog = db.getRefuelingDao().getAllRefuelLog()
         var allTimeDrivingCost = 0.0
         allRefuelLog.let { refuelList ->
@@ -129,14 +130,13 @@ class HomeRepositoryImpl @Inject constructor(
                         refuelList[element].fuelAmount * refuelList[element].fuelPricePerLiter
                     allTimeDrivingCost += refuelPayment
                 }
-                return@let formatDouble(allTimeDrivingCost).toDouble()
-            } else return@let 0.0
+                return formatDouble(allTimeDrivingCost).toDouble()
+            } else return 0.0
         }
     }
 
-
-    private suspend fun getSummaryFuelAmount(): Double= withContext(Dispatchers.Default) {
-        return@withContext if (db.getRefuelingDao().getSumRefuelAmount() == null)
+    private suspend fun getSummaryFuelAmount(): Double {
+        return if (db.getRefuelingDao().getSumRefuelAmount() == null)
             0.0
         else formatDouble(db.getRefuelingDao().getSumRefuelAmount()).toDouble()
     }

@@ -50,65 +50,54 @@ class HomeViewModel @Inject constructor(
 
     private fun getLastRefuelDetail() {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                kotlin.runCatching {
-                    val resource = getLastRefuelDetailUseCase.getLastRefuelDetail()
-                    _lastRefuelStateFlow.value = resource
-                }.onFailure { e: Throwable ->
-                    _lastRefuelStateFlow.value = Resource.Error(
-                        message = e.message, data = LastRefuelDetailsModel(
-                            lastRefuelDistance = 0,
-                            lastRefuelPayment = 0.0,
-                            lastRefuelFuelAverage = 0.0
-                        )
+            kotlin.runCatching {
+                val resource = getLastRefuelDetailUseCase.getLastRefuelDetail()
+                _lastRefuelStateFlow.value = resource
+            }.onFailure { e: Throwable ->
+                _lastRefuelStateFlow.value = Resource.Error(
+                    message = e.message, data = LastRefuelDetailsModel(
+                        lastRefuelDistance = 0,
+                        lastRefuelPayment = 0.0,
+                        lastRefuelFuelAverage = 0.0
                     )
-                }
+                )
             }
         }
     }
 
     private fun getSummaryRefuelStat() {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                kotlin.runCatching {
-                    val resource = getSummaryRefuelStatUseCase.getSummaryRefuelStat()
-                    _summaryRefuelDetailStateFlow.value = resource
-                }.onFailure { e: Throwable ->
-                    _summaryRefuelDetailStateFlow.value =
-                        Resource.Error(message = e.message, data = null)
-                }
+            kotlin.runCatching {
+                val resource = getSummaryRefuelStatUseCase.getSummaryRefuelStat()
+                _summaryRefuelDetailStateFlow.value = resource
+            }.onFailure { e: Throwable ->
+                _summaryRefuelDetailStateFlow.value =
+                    Resource.Error(message = e.message, data = null)
             }
-
         }
     }
 
     private fun getAllTimeFuelAverage() {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                kotlin.runCatching {
-                    val resource = getAllTimeFuelAverageUseCase.getAllTimeFuelAverage()
-                    _allTimeFuelAverageStateFlow.value = resource
-                }.onFailure { e: Throwable ->
-                    _allTimeFuelAverageStateFlow.value =
-                        Resource.Error(message = e.message, data = null)
-                }
+            kotlin.runCatching {
+                val resource = getAllTimeFuelAverageUseCase.getAllTimeFuelAverage()
+                _allTimeFuelAverageStateFlow.value = resource
+            }.onFailure { e: Throwable ->
+                _allTimeFuelAverageStateFlow.value =
+                    Resource.Error(message = e.message, data = null)
             }
-
         }
     }
 
     private fun getAllTimeDrivingCost() {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                kotlin.runCatching {
-                    val resource = getAllTimeDrivingCostUseCase.getAllTimeDrivingCost()
-                    _allTimeDrivingCostStateFlow.value = resource
-                }.onFailure { e: Throwable ->
-                    _allTimeDrivingCostStateFlow.value =
-                        Resource.Error(message = e.message, data = null)
-                }
+            kotlin.runCatching {
+                val resource = getAllTimeDrivingCostUseCase.getAllTimeDrivingCost()
+                _allTimeDrivingCostStateFlow.value = resource
+            }.onFailure { e: Throwable ->
+                _allTimeDrivingCostStateFlow.value =
+                    Resource.Error(message = e.message, data = null)
             }
-
         }
     }
 

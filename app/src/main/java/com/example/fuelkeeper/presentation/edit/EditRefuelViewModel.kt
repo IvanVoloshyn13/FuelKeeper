@@ -37,7 +37,7 @@ class EditRefuelViewModel @Inject constructor(
         }
     }
 
-    fun updateRefuel(refuel: RefuelingModel,  callback: (Boolean) -> Unit) {
+    fun updateRefuel(refuel: RefuelingModel, callback: (Boolean) -> Unit) {
         viewModelScope.launch {
             callback(updateRefuelUseCase.updateRefuel(refuel))
         }

@@ -5,8 +5,7 @@ import com.example.fuelkeeper.domain.models.RefuelingStatModel
 import com.example.fuelkeeper.domain.repositoryInterface.AllRefuelLogRepository
 import javax.inject.Inject
 
-class getAllRefuelLogUseCase @Inject constructor(val allRefuelLogRepository: AllRefuelLogRepository) {
-
+class GetAllRefuelLogUseCase @Inject constructor(private val allRefuelLogRepository: AllRefuelLogRepository) {
     suspend fun getAllRefuelLog(): Resource<List<RefuelingStatModel>> {
         return allRefuelLogRepository.getAllRefuelLog()
     }

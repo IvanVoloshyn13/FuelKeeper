@@ -39,9 +39,8 @@ interface RefuelingDao {
     @Query("SELECT fuelAmount FROM refueling_register ORDER BY id ASC LIMIT 1")
     suspend fun getFirstFuelAmount(): Double
 
-
-    @Query("DELETE FROM refueling_register WHERE currentMileage=:id")
-    suspend fun deleteRefuel(id: Int)
+    @Query("DELETE FROM refueling_register WHERE id=:refuelId")
+    suspend fun deleteRefuel(refuelId: Int)
 
     @Query("SELECT * FROM refueling_register WHERE id=:itemId LIMIT 1")
     suspend fun getRefuelById(itemId: Int): RefuelingEntity

@@ -12,6 +12,7 @@ class EditRepositoryImpl @Inject constructor(val db: RefuelingDataBase) : EditRe
         db.getRefuelingDao().getRefuelById(id).let { result ->
             if (result != null) {
                 return RefuelingModel(
+                    id=result.id,
                     refuelDate = result.refuelDate,
                     currentMileage = result.currentMileage,
                     fuelAmount = result.fuelAmount,
@@ -30,10 +31,6 @@ class EditRepositoryImpl @Inject constructor(val db: RefuelingDataBase) : EditRe
         }
     }
 
-
-
-
-
     override suspend fun updateRefuel(refuel: RefuelingModel): Boolean {
         db.getRefuelingDao().updateRefuel(mapToRefuelingEntity(refuel))
         return true
@@ -43,6 +40,7 @@ class EditRepositoryImpl @Inject constructor(val db: RefuelingDataBase) : EditRe
         newRefuel: RefuelingModel
     ): RefuelingEntity {
             return RefuelingEntity(
+                id=newRefuel.id,
                 refuelDate = newRefuel.refuelDate,
                 currentMileage = newRefuel.currentMileage,
                 fuelAmount = newRefuel.fuelAmount,
@@ -52,10 +50,4 @@ class EditRepositoryImpl @Inject constructor(val db: RefuelingDataBase) : EditRe
             )
         }
 
-
-    fun formatDouble(number: Double): String {
-        if (number != null) {
-            return String.format("%.2f", number)
-        } else return "0.0"
-    }
 }

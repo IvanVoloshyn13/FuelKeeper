@@ -7,6 +7,8 @@ import com.example.fuelkeeper.domain.models.RefuelingStatModel
 import com.example.fuelkeeper.domain.repositoryInterface.AllRefuelLogRepository
 import javax.inject.Inject
 
+const val CHUNK_SIZE = 3
+
 class AllRefuelLogRepositoryImpl @Inject constructor(val db: RefuelingDataBase) :
     AllRefuelLogRepository {
     override suspend fun getAllRefuelLog(): Resource<List<RefuelingStatModel>> {
@@ -33,11 +35,9 @@ class AllRefuelLogRepositoryImpl @Inject constructor(val db: RefuelingDataBase) 
         return Resource.Success(refuelingStatModelList)
     }
 
-
-    override suspend fun deleteRefuelLog(id: Int): Boolean {
-        TODO("Not yet implemented")
+    override suspend fun deleteRefuelLog(id: Int) {
+        db.getRefuelingDao().deleteRefuel(id)
     }
-
 
     private fun mapToRefuelingStatModel(
         entity: RefuelingEntity,
@@ -49,7 +49,7 @@ class AllRefuelLogRepositoryImpl @Inject constructor(val db: RefuelingDataBase) 
             return RefuelingStatModel(
                 id = entity.id,
                 refuelDate = entity.refuelDate,
-                currentMileage = formatNumber(entity.currentMileage.toString(), 3),
+                currentMileage = formatNumber(entity.currentMileage.toString(), CHUNK_SIZE),
                 refuelPayment = formatDouble(entity.fuelAmount * entity.fuelPricePerLiter),
                 lastRefuelDistance = lastRefuelDistance,
                 fuelAverage = "0.0",
@@ -58,10 +58,10 @@ class AllRefuelLogRepositoryImpl @Inject constructor(val db: RefuelingDataBase) 
             )
         } else {
             val fuelAverage = formatDouble(entity.fuelAmount / lastRefuelDistance * 100)
-            return return RefuelingStatModel(
+            return RefuelingStatModel(
                 id = entity.id,
                 refuelDate = entity.refuelDate,
-                currentMileage = formatNumber(entity.currentMileage.toString(), 3),
+                currentMileage = formatNumber(entity.currentMileage.toString(), CHUNK_SIZE),
                 refuelPayment = formatDouble(entity.fuelAmount * entity.fuelPricePerLiter),
                 lastRefuelDistance = lastRefuelDistance,
                 fuelAverage = fuelAverage,

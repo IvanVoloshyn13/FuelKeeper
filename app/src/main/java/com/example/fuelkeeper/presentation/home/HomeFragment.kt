@@ -28,7 +28,6 @@ class HomeFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
-
     }
 
     @SuppressLint("SetTextI18n")
@@ -149,6 +148,5 @@ class HomeFragment : Fragment() {
             }
         }
     }
-
 
 }

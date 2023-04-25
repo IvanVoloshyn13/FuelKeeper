@@ -14,19 +14,21 @@ class RefuelLogAdapter(val listener: OnItemClickListener) :
     RecyclerView.Adapter<RefuelLogAdapter.RefuelViewHolder>() {
 
     private val refuelingList = ArrayList<RefuelingStatModel>()
+    var onDeleteBttClickListener: OnDeleteBttClickListener? = null
 
     inner class RefuelViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val binding = ItemRvFuelLogBinding.bind(itemView)
+
 
         @SuppressLint("SetTextI18n")
         fun bind(data: RefuelingStatModel) {
             binding.apply {
                 tvCurrentMileage.text =
-                    "${data.currentMileage}  ${ itemView.context.getString(R.string.km)} "
+                    "${data.currentMileage}  ${itemView.context.getString(R.string.km)} "
                 tvRefuelDate.text = data.refuelDate
                 tvFuelAverage.text = data.fuelAverage
                 tvMileageOnLastRefuel.text =
-                    data.lastRefuelDistance.toString()  + itemView.context.getString(R.string.km)
+                    data.lastRefuelDistance.toString() + itemView.context.getString(R.string.km)
                 tvLastRefuelPrice.text =
                     data.refuelPayment + itemView.context.getString(R.string.pln)
 
@@ -38,7 +40,12 @@ class RefuelLogAdapter(val listener: OnItemClickListener) :
                     }
 
                 }
-
+            }
+            binding.bttDelete.setOnClickListener {
+                data.id.let { itemId ->
+                    if (itemId != null)
+                        onDeleteBttClickListener?.onDeleteClick( itemId)
+                }
             }
         }
     }
@@ -65,5 +72,9 @@ class RefuelLogAdapter(val listener: OnItemClickListener) :
 
     interface OnItemClickListener {
         fun onItemClick(itemId: Int)
+    }
+
+    interface OnDeleteBttClickListener {
+        fun onDeleteClick( itemId: Int)
     }
 }
