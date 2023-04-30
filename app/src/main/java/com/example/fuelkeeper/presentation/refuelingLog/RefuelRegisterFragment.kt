@@ -1,6 +1,7 @@
 package com.example.fuelkeeper.presentation.refuelingLog
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +16,10 @@ import com.example.fuelkeeper.databinding.FragmentRefuelRegisterBinding
 import com.example.fuelkeeper.domain.Resource
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class RefuelRegisterFragment : Fragment(), RefuelLogAdapter.OnItemClickListener,
@@ -71,12 +75,36 @@ class RefuelRegisterFragment : Fragment(), RefuelLogAdapter.OnItemClickListener,
     }
 
     override fun onDeleteClick(itemId: Int) {
-        Snackbar.make(this.requireView(), "Delete Item?", Snackbar.LENGTH_LONG)
-            .setAction("Confirm") {
-                refuelRegViewModel.deleteRefuelItem(itemId)
-                Toast.makeText(this.requireContext(), "Delete successful", Toast.LENGTH_SHORT)
-                    .show()
-            }.show()
+        lifecycleScope.launch() {
+            withContext(Dispatchers.IO) {
+                refuelRegViewModel.saveDeletedRefuel(itemId)
+                Log.d("ONDELETE", "saveItem")
+            }
+            withContext(Dispatchers.IO ) {
+                refuelRegViewModel.removeRefuelItem(itemId)
+                Log.d("ONDELETE", "deleteItem")
+            }
+
+            Snackbar.make(
+                this@RefuelRegisterFragment.requireView(),
+                "Delete Item?",
+                Snackbar.LENGTH_LONG
+            )
+                .setAction("Cancel") {
+                    lifecycleScope.launch {
+                        withContext(Dispatchers.IO) {
+                            refuelRegViewModel.revertRemoving()
+                            Log.d("ONDELETE", "revertItem")
+                        }
+                        Toast.makeText(
+                            this@RefuelRegisterFragment.requireContext(),
+                            "Delete cancel",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }.show()
+        }
+
     }
 
 

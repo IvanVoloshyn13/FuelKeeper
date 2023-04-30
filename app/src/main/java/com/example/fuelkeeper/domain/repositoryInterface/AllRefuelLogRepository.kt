@@ -8,5 +8,7 @@ interface AllRefuelLogRepository {
 
     suspend fun getAllRefuelLog(): Resource<List<RefuelingStatModel>>
     suspend fun deleteRefuelLog(id: Int)
+    suspend fun returnDeletedElement(itemId: Int): Resource<RefuelingModel>
+    suspend fun insertDeletedElement(refuel: RefuelingModel)
 
 }

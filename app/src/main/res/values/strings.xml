@@ -27,5 +27,6 @@
     <!-- Refuel Register Fragment text resources -->
     <string name="km"> km</string>
     <string name="pln"> pln</string>
+    <string name="delete_cancel">Delete Cancel</string>
 
 </resources>

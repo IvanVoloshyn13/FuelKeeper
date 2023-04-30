@@ -122,6 +122,7 @@ class HomeFragment : Fragment() {
                             fuelAverageResource.message,
                             Toast.LENGTH_SHORT
                         ).show()
+                        binding.tvFuelAverageDetail.text = fuelAverageResource.data.toString()
                     }
                 }
             }

@@ -3,23 +3,33 @@ package com.example.fuelkeeper.presentation.refuelingLog
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fuelkeeper.domain.Resource
+import com.example.fuelkeeper.domain.models.RefuelingModel
 import com.example.fuelkeeper.domain.models.RefuelingStatModel
 import com.example.fuelkeeper.domain.usecase.refuelRegisterLogDetail.DeleteRefuelLogUseCase
 import com.example.fuelkeeper.domain.usecase.refuelRegisterLogDetail.GetAllRefuelLogUseCase
+import com.example.fuelkeeper.domain.usecase.refuelRegisterLogDetail.ReturnDeletedElementUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class RefuelRegisterViewModel @Inject constructor(
     private val allRefuelLogUseCase: GetAllRefuelLogUseCase,
-    private val deleteRefuelLogUseCase: DeleteRefuelLogUseCase
+    private val deleteRefuelLogUseCase: DeleteRefuelLogUseCase,
+    private val returnDeletedElementUseCase: ReturnDeletedElementUseCase
 ) : ViewModel() {
 
     init {
         getAllRefuelLogList()
     }
+
+    // TODO: create var deletedItem instead of Flow 
+
+    lateinit var deletedRefuelItem: RefuelingModel
 
     private val _refuelLogDetailListFlow =
         MutableStateFlow<Resource<List<RefuelingStatModel>>>(Resource.Loading())
@@ -37,12 +47,29 @@ class RefuelRegisterViewModel @Inject constructor(
         }
     }
 
-    fun deleteRefuelItem(itemId: Int) {
+    fun saveDeletedRefuel(itemId: Int) {
+        viewModelScope.launch {
+            val result = returnDeletedElementUseCase.returnDeletedElement(itemId)
+            result.data.let { data ->
+                if (data != null)
+                    deletedRefuelItem = data
+            }
+        }
+    }
+
+    fun removeRefuelItem(itemId: Int) {
         viewModelScope.launch {
             deleteRefuelLogUseCase.deleteRefuelLogById(itemId)
             getAllRefuelLogList()
         }
     }
 
+
+    fun revertRemoving() {
+        viewModelScope.launch {
+            returnDeletedElementUseCase.insertDeletedElement(deletedRefuelItem)
+            getAllRefuelLogList()
+        }
+    }
 
 }
