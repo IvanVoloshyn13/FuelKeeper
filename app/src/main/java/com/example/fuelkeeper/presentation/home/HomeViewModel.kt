@@ -8,19 +8,17 @@ import com.example.fuelkeeper.domain.models.SummaryRefuelStatModel
 import com.example.fuelkeeper.domain.usecase.homeFrag.GetAllTimeDrivingCostUseCase
 import com.example.fuelkeeper.domain.usecase.homeFrag.GetAllTimeFuelAverageUseCase
 import com.example.fuelkeeper.domain.usecase.homeFrag.GetLastRefuelDetailUseCase
-import com.example.fuelkeeper.domain.usecase.homeFrag.GetSummaryRefuelStatUseCase
+import com.example.fuelkeeper.domain.usecase.homeFrag.GetSummaryRefuelStatsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val getLastRefuelDetailUseCase: GetLastRefuelDetailUseCase,
-    val getSummaryRefuelStatUseCase: GetSummaryRefuelStatUseCase,
+    val getSummaryRefuelStatsUseCase: GetSummaryRefuelStatsUseCase,
     val getAllTimeFuelAverageUseCase: GetAllTimeFuelAverageUseCase,
     val getAllTimeDrivingCostUseCase: GetAllTimeDrivingCostUseCase
 ) :
@@ -33,11 +31,13 @@ class HomeViewModel @Inject constructor(
     }
 
     private val _summaryRefuelDetailStateFlow =
-        MutableStateFlow<Resource<SummaryRefuelStatModel>>(Resource.Loading())
+        MutableStateFlow<Resource<SummaryRefuelStatModel>>(
+            Resource.Loading())
     val summaryRefuelDetailStateFlow = _summaryRefuelDetailStateFlow.asStateFlow()
 
     private val _lastRefuelStateFlow =
-        MutableStateFlow<Resource<LastRefuelDetailsModel>>(Resource.Loading())
+        MutableStateFlow<Resource<LastRefuelDetailsModel>>(
+            Resource.Loading())
     val lastRefuelStateFlow = _lastRefuelStateFlow.asStateFlow()
 
     private val _allTimeFuelAverageStateFlow =
@@ -68,7 +68,7 @@ class HomeViewModel @Inject constructor(
     private fun getSummaryRefuelStat() {
         viewModelScope.launch {
             kotlin.runCatching {
-                val resource = getSummaryRefuelStatUseCase.getSummaryRefuelStat()
+                val resource = getSummaryRefuelStatsUseCase.getSummaryRefuelStat()
                 _summaryRefuelDetailStateFlow.value = resource
             }.onFailure { e: Throwable ->
                 _summaryRefuelDetailStateFlow.value =
@@ -84,7 +84,7 @@ class HomeViewModel @Inject constructor(
                 _allTimeFuelAverageStateFlow.value = resource
             }.onFailure { e: Throwable ->
                 _allTimeFuelAverageStateFlow.value =
-                    Resource.Error(message = e.message, data = null)
+                   Resource.Error(message = e.message, data = null)
             }
         }
     }

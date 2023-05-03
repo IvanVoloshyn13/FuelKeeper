@@ -19,7 +19,6 @@ class RefuelLogAdapter(val listener: OnItemClickListener) :
     inner class RefuelViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val binding = ItemRvFuelLogBinding.bind(itemView)
 
-
         @SuppressLint("SetTextI18n")
         fun bind(data: RefuelingStatModel) {
             binding.apply {

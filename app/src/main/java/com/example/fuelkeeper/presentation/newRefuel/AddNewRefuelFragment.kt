@@ -2,6 +2,7 @@ package com.example.fuelkeeper.presentation.newRefuel
 
 import android.app.DatePickerDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,10 +14,11 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.fuelkeeper.R
 import com.example.fuelkeeper.databinding.FragmentAddNewRefuelBinding
-import com.example.fuelkeeper.domain.models.RefuelingModel
+import com.example.fuelkeeper.utils.ValidateManager
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.DateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Locale
 
 
 @AndroidEntryPoint
@@ -24,6 +26,7 @@ class AddNewRefuelFragment : Fragment() {
     private lateinit var binding: FragmentAddNewRefuelBinding
     private val addNewRefuelViewModel: AddNewRefuelViewModel by viewModels()
     private lateinit var datePicker: DatePickerDialog
+    private lateinit var validateManager: ValidateManager
 
 
     override fun onCreateView(
@@ -33,6 +36,8 @@ class AddNewRefuelFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = FragmentAddNewRefuelBinding.inflate(inflater, container, false)
         datePicker = DatePickerDialog(requireContext())
+        validateManager = ValidateManager(this.requireContext())
+
         return binding.root
     }
 
@@ -51,9 +56,7 @@ class AddNewRefuelFragment : Fragment() {
                 it.applicationWindowToken,
                 InputMethodManager.HIDE_NOT_ALWAYS
             )
-            binding.currentMileageContainer.helperText = validCurrentMileage()
-            binding.fuelPriceContainer.helperText = validFuelPrice()
-            binding.fuelAmountContainer.helperText = validFuelAmount()
+            editTextContainersValidate()
         }
 
         datePicker.setOnCancelListener { binding.etRefuelDate.clearFocus() }
@@ -92,6 +95,7 @@ class AddNewRefuelFragment : Fragment() {
             val dateFormat = DateFormat.getDateInstance(DateFormat.DEFAULT, locale)
             formattedDate = dateFormat.format(calendar.time)
             binding.etRefuelDate.setText(formattedDate)
+            binding.etRefuelDate.clearFocus()
         }
     }
 
@@ -102,7 +106,7 @@ class AddNewRefuelFragment : Fragment() {
         val fuelPricePerLiter = binding.etFuelPrice.text.toString().toDouble()
         val notes: String? = binding.etNotes.text.toString()
         val fillUp = binding.checkbox.isChecked
-        var newRefuel = RefuelingModel(
+        var newRefuel = com.example.fuelkeeper.domain.models.RefuelingModel(
             refuelDate = date,
             currentMileage = currentMileage,
             fuelAmount = fuelAmount,
@@ -116,6 +120,7 @@ class AddNewRefuelFragment : Fragment() {
                     Toast.makeText(this.requireContext(), "Success", Toast.LENGTH_SHORT).show()
                     findNavController().navigate(R.id.action_addNewRefuelFragment_to_homeFragment)
                 }
+
                 else -> {
                     Toast.makeText(this.requireContext(), "Some Error", Toast.LENGTH_SHORT).show()
                 }
@@ -123,61 +128,35 @@ class AddNewRefuelFragment : Fragment() {
         }
     }
 
-
-   private fun fuelAmountFocusListener() {
+    private fun fuelAmountFocusListener() {
         binding.etFuelAmount.setOnFocusChangeListener { view, focused ->
             if (!focused) {
-                binding.fuelAmountContainer.helperText = validFuelAmount()
+                binding.fuelAmountContainer.helperText =
+                    validateManager.validFields(binding.etFuelAmount.text.toString())
             }
         }
-    }
-
-    private fun validFuelAmount(): String? {
-        val fuelAmountText = binding.etFuelAmount.text.toString()
-        if (fuelAmountText.isEmpty()) {
-            return getString(R.string.empty_field_error)
-        }
-        return null
     }
 
     private fun currentMileageFocusListener() {
         binding.etCurrentMileage.setOnFocusChangeListener { view, focused ->
             if (!focused) {
-                binding.currentMileageContainer.helperText = validCurrentMileage()
+                binding.currentMileageContainer.helperText =
+                    validateManager.validFields(binding.etCurrentMileage.text.toString())
             }
         }
     }
-
-    private fun validCurrentMileage(): String? {
-        val currentMileageText = binding.etCurrentMileage.text.toString()
-        if (currentMileageText.isEmpty()) {
-            return getString(R.string.empty_field_error)
-        }
-        return null
-    }
-
 
     private fun fuelPriceFocusListener() {
         binding.etFuelPrice.setOnFocusChangeListener { view, focused ->
             if (!focused) {
-                binding.fuelPriceContainer.helperText = validFuelPrice()
+                binding.fuelPriceContainer.helperText =
+                    validateManager.validFields(binding.etFuelPrice.text.toString())
             }
         }
     }
 
-    private fun validFuelPrice(): String? {
-        val fuelPriceText = binding.etFuelPrice.text.toString()
-        if (fuelPriceText.isEmpty()) {
-            return getString(R.string.empty_field_error)
-        }
-        return null
-    }
-
-
     private fun submitForm(): Boolean {
-        binding.fuelAmountContainer.helperText = validFuelAmount()
-        binding.currentMileageContainer.helperText = validCurrentMileage()
-        binding.fuelPriceContainer.helperText = validFuelPrice()
+        editTextContainersValidate()
         val validFuelAmount = binding.fuelAmountContainer.helperText == null
         val validCurrentMileage = binding.currentMileageContainer.helperText == null
         val validFuelPrice = binding.fuelPriceContainer.helperText == null
@@ -186,6 +165,16 @@ class AddNewRefuelFragment : Fragment() {
         }
         return false
     }
+
+    private fun editTextContainersValidate() {
+        binding.fuelAmountContainer.helperText =
+            validateManager.validFields(binding.etFuelAmount.text.toString())
+        binding.currentMileageContainer.helperText =
+            validateManager.validFields(binding.etCurrentMileage.text.toString())
+        binding.fuelPriceContainer.helperText =
+            validateManager.validFields(binding.etFuelPrice.text.toString())
+    }
+
 }
 
 

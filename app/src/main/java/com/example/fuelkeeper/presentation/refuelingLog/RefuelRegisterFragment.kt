@@ -30,7 +30,7 @@ class RefuelRegisterFragment : Fragment(), RefuelLogAdapter.OnItemClickListener,
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
         binding = FragmentRefuelRegisterBinding.inflate(inflater)
         adapter = RefuelLogAdapter(this)
@@ -75,7 +75,7 @@ class RefuelRegisterFragment : Fragment(), RefuelLogAdapter.OnItemClickListener,
     }
 
     override fun onDeleteClick(itemId: Int) {
-        lifecycleScope.launch() {
+        lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 refuelRegViewModel.saveDeletedRefuel(itemId)
                 Log.d("ONDELETE", "saveItem")

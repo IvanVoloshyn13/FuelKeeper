@@ -54,9 +54,4 @@ class AppModule {
     }
 
 
-    @Provides
-    @Singleton
-    fun provideAddNewRefuelingUseCase(addNewRefuelRepository: AddNewRefuelRepository) =
-        AddNewRefuelingUseCase(addNewRefuelRepository = addNewRefuelRepository)
-
 }

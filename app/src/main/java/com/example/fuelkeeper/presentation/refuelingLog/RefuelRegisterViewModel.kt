@@ -7,20 +7,20 @@ import com.example.fuelkeeper.domain.models.RefuelingModel
 import com.example.fuelkeeper.domain.models.RefuelingStatModel
 import com.example.fuelkeeper.domain.usecase.refuelRegisterLogDetail.DeleteRefuelLogUseCase
 import com.example.fuelkeeper.domain.usecase.refuelRegisterLogDetail.GetAllRefuelLogUseCase
+import com.example.fuelkeeper.domain.usecase.refuelRegisterLogDetail.InsertDeletedRefuelItemUseCase
 import com.example.fuelkeeper.domain.usecase.refuelRegisterLogDetail.ReturnDeletedElementUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class RefuelRegisterViewModel @Inject constructor(
     private val allRefuelLogUseCase: GetAllRefuelLogUseCase,
     private val deleteRefuelLogUseCase: DeleteRefuelLogUseCase,
-    private val returnDeletedElementUseCase: ReturnDeletedElementUseCase
+    private val insertDeletedRefuelItemUseCase: InsertDeletedRefuelItemUseCase,
+    private val returnDeletedElementUseCase: ReturnDeletedElementUseCase,
 ) : ViewModel() {
 
     init {
@@ -32,7 +32,9 @@ class RefuelRegisterViewModel @Inject constructor(
     lateinit var deletedRefuelItem: RefuelingModel
 
     private val _refuelLogDetailListFlow =
-        MutableStateFlow<Resource<List<RefuelingStatModel>>>(Resource.Loading())
+        MutableStateFlow<Resource<List<RefuelingStatModel>>>(
+            Resource.Loading()
+        )
     val refuelStatStateFlow = _refuelLogDetailListFlow.asStateFlow()
 
     private fun getAllRefuelLogList() {
@@ -67,7 +69,7 @@ class RefuelRegisterViewModel @Inject constructor(
 
     fun revertRemoving() {
         viewModelScope.launch {
-            returnDeletedElementUseCase.insertDeletedElement(deletedRefuelItem)
+            insertDeletedRefuelItemUseCase.insertDeletedElement(deletedRefuelItem)
             getAllRefuelLogList()
         }
     }
