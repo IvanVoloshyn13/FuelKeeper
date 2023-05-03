@@ -7,14 +7,51 @@
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.fuelkeeper.presentation.home.HomeFragment"
-        android:label="HomeFragment" >
+        android:label="HomeFragment">
         <action
             android:id="@+id/action_homeFragment_to_addNewRefuelFragment"
             app:destination="@id/addNewRefuelFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_refuelRegisterFragment"
+            app:destination="@id/refuelRegisterFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/addNewRefuelFragment"
         android:name="com.example.fuelkeeper.presentation.newRefuel.AddNewRefuelFragment"
         android:label="fragment_add_new_refuel"
-        tools:layout="@layout/fragment_add_new_refuel" />
+        tools:layout="@layout/fragment_add_new_refuel">
+        <action
+            android:id="@+id/action_addNewRefuelFragment_to_homeFragment"
+            app:destination="@id/homeFragment">
+
+        </action>
+
+    </fragment>
+    <fragment
+        android:id="@+id/refuelRegisterFragment"
+        android:name="com.example.fuelkeeper.presentation.refuelingLog.RefuelRegisterFragment"
+        android:label="fragment_refuel_register"
+        tools:layout="@layout/fragment_refuel_register" >
+        <action
+            android:id="@+id/action_refuelRegisterFragment_to_editRefuelItemFragment"
+            app:destination="@id/editRefuelItemFragment" >
+        <argument
+            android:name="refuelItemId"
+            app:argType="integer" />
+        </action>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/editRefuelItemFragment"
+        android:name="com.example.fuelkeeper.presentation.edit.EditRefuelItemFragment"
+        android:label="EditRefuelItemFragment" >
+        <action
+            android:id="@+id/action_editRefuelItemFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <argument
+            android:name="refuelItemId"
+            app:argType="integer" />
+    </fragment>
 </navigation>
