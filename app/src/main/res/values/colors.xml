@@ -7,9 +7,13 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="red">#E2F62828</color>
+    <color name="green">#30A333</color>
 
-    <!-- Home Fragment color resources -->
-    <color name="home_text_view_color">#F78F8D8D</color>
-    <color name="home_card_view_color">#F7252525</color>
-    <color name="home_text_view_number_color">#F7F34E4E</color>
+    <color name="home_text_view_color">#43484A</color>
+    <color name="home_card_view_color">#65C8C8C8</color>
+    <color name="home_text_view_number_color">#F7057787</color>
+    <color name="bottom_nav_background">#C8C8C8</color>
+    <color name="moon_icon_color">#202020</color>
+
 </resources>

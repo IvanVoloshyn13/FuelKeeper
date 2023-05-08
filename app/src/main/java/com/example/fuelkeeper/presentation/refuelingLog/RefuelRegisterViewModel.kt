@@ -27,7 +27,6 @@ class RefuelRegisterViewModel @Inject constructor(
         getAllRefuelLogList()
     }
 
-    // TODO: create var deletedItem instead of Flow 
 
     lateinit var deletedRefuelItem: RefuelingModel
 

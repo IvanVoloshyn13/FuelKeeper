@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000"
+    style="@style/BackgroundColor"
     android:orientation="vertical"
     tools:context=".presentation.newRefuel.AddNewRefuelFragment">
 
@@ -14,8 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:layout_marginEnd="12dp"
-        android:textColorHint="@color/white"
-        app:boxStrokeColor="@color/white"
+        style="@style/TextInputLayoutColorHint"
         app:hintAnimationEnabled="true"
         app:hintEnabled="true"
         app:hintTextColor="@color/home_text_view_color">
@@ -24,13 +23,13 @@
             android:id="@+id/et_refuel_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/black"
+            style="@style/TextInputLayoutStyle"
             android:cursorVisible="false"
             android:hint="@string/refuel_date_hint"
             android:inputType="text"
             android:pointerIcon="none"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-            android:textColor="@color/white" />
+           />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -39,8 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:layout_marginEnd="12dp"
-        android:textColorHint="@color/white"
-        app:boxStrokeColor="@color/white"
+        style="@style/TextInputLayoutColorHint"
         app:counterEnabled="true"
         app:counterMaxLength="16"
         app:counterTextColor="@color/white"
@@ -54,10 +52,10 @@
             android:id="@+id/et_current_mileage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/black"
+            style="@style/TextInputLayoutStyle"
             android:hint="@string/current_mileage_hint"
             android:inputType="numberDecimal"
-            android:textColor="@color/white" />
+            />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -66,8 +64,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:layout_marginEnd="12dp"
-        android:textColorHint="@color/white"
-        app:boxStrokeColor="@color/white"
+        style="@style/TextInputLayoutColorHint"
         app:counterEnabled="true"
         app:counterMaxLength="16"
         app:counterTextColor="@color/white"
@@ -82,10 +79,10 @@
             android:id="@+id/et_fuel_amount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#000000"
+            style="@style/TextInputLayoutStyle"
             android:hint="@string/fuel_amount_hint"
             android:inputType="numberDecimal"
-            android:textColor="@color/white" />
+            />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -94,8 +91,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:layout_marginEnd="12dp"
-        android:textColorHint="@color/white"
-        app:boxStrokeColor="@color/white"
+        style="@style/TextInputLayoutColorHint"
         app:counterEnabled="true"
         app:counterMaxLength="16"
         app:counterTextColor="@color/white"
@@ -109,10 +105,10 @@
             android:id="@+id/et_fuel_price"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/black"
+            style="@style/TextInputLayoutStyle"
             android:hint="@string/fuel_price_hint"
             android:inputType="numberDecimal"
-            android:textColor="@color/white" />
+            />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -121,8 +117,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:layout_marginEnd="12dp"
-        android:textColorHint="@color/white"
-        app:boxStrokeColor="@color/white"
+        style="@style/TextInputLayoutColorHint"
         app:hintAnimationEnabled="true"
         app:hintEnabled="true"
         app:hintTextColor="@color/home_text_view_color">
@@ -131,10 +126,9 @@
             android:id="@+id/et_notes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/black"
+            style="@style/TextInputLayoutStyle"
             android:hint="@string/notes_hint"
-            android:inputType="text"
-            android:textColor="@color/white" />
+            android:inputType="text" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -144,7 +138,7 @@
         android:layout_height="wrap_content"
         android:checked="false"
         android:text="Tankowanie do pelna"
-        android:textColor="@color/white" />
+        style="@style/TextInputLayoutColorHint" />
 
     <Button
         android:id="@+id/btt_save"

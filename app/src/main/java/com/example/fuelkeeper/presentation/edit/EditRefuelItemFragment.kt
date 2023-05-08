@@ -71,9 +71,6 @@ class EditRefuelItemFragment : Fragment() {
             }
         }
 
-        fuelAmountFocusListener()
-        fuelPriceFocusListener()
-        currentMileageFocusListener()
 
         binding.etRefuelDate.showSoftInputOnFocus = false
 
@@ -111,8 +108,15 @@ class EditRefuelItemFragment : Fragment() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        fuelAmountFocusListener()
+        fuelPriceFocusListener()
+        currentMileageFocusListener()
+    }
+
     private fun fuelAmountFocusListener() {
-        binding.etFuelAmount.setOnFocusChangeListener { view, focused ->
+        binding.etFuelAmount.setOnFocusChangeListener { _, focused ->
             if (!focused) {
                 binding.fuelAmountContainer.helperText =
                     validateManager.validFields(binding.etFuelAmount.text.toString())
@@ -121,7 +125,7 @@ class EditRefuelItemFragment : Fragment() {
     }
 
     private fun currentMileageFocusListener() {
-        binding.etCurrentMileage.setOnFocusChangeListener { view, focused ->
+        binding.etCurrentMileage.setOnFocusChangeListener { _, focused ->
             if (!focused) {
                 binding.currentMileageContainer.helperText =
                     validateManager.validFields(binding.etCurrentMileage.text.toString())
@@ -130,7 +134,7 @@ class EditRefuelItemFragment : Fragment() {
     }
 
     private fun fuelPriceFocusListener() {
-        binding.etFuelPrice.setOnFocusChangeListener { view, focused ->
+        binding.etFuelPrice.setOnFocusChangeListener { _, focused ->
             if (!focused) {
                 binding.fuelPriceContainer.helperText =
                     validateManager.validFields(binding.etFuelPrice.text.toString())
@@ -202,5 +206,6 @@ class EditRefuelItemFragment : Fragment() {
 
         }
     }
+
 
 }

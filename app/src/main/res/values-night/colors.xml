@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="home_text_view_color">#F7FFFAFA</color>
-    <color name="home_card_view_color">#F7FFFFFF</color>
-    <color name="home_text_view_number_color">#F7FFFFFF</color>
+    <!-- Home Fragment color resources -->
+    <color name="home_text_view_color">#F78F8D8D</color>
+    <color name="home_card_view_color">#F7252525</color>
+    <color name="home_text_view_number_color">#F7F34E4E</color>
+    <color name="bottom_nav_background">#000000</color>
+    <color name="moon_icon_color">#EDEDED</color>
 </resources>

@@ -48,7 +48,7 @@ class HomeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getSummaryRefuelStatDetail(): Resource<SummaryRefuelStatModel> =
-        withContext(Dispatchers.Default) {
+        withContext(Dispatchers.IO) {
             val refuelAmountSum = getSummaryFuelAmount()
             val refuelPaymentsSum = getSummaryPayments()
             val summaryDistance = getSummaryDistance()
@@ -77,7 +77,7 @@ class HomeRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getAllTimeDrivingCost(): Resource<Double> =
-        withContext(Dispatchers.Default) {
+        withContext(Dispatchers.IO) {
             val allTimeFuelAverage = getAllTimeFuelAverage().data
             val allTimeFuelPricePerLiterAverage = getAllTimeFuelPricePerLiterAverage()
             if (allTimeFuelAverage != null) {

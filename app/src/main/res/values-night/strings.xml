@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="fuel_average">Fuel Average</string>
+    <string name="night_mode_is_on">Night Mode is on</string>
+    <string name="night_mode_is_off">Night Mode is off</string>
+    <string name="turn_on_night_mode">Turn On Night Mode</string>
+    <string name="turn_off_night_mode">Turn Off Night Mode</string>
+    <string name="chose_theme">Wybierz kolorystyke</string>
+    <string name="taka_sama_jak_w_telefonie">Taka sama jak w telefonie</string>
+    <string name="nocny_motyw">Nocny motyw</string>
+    <string name="jasny_motyw">Jasny motyw</string>
 </resources>

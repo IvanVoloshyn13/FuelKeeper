@@ -6,14 +6,14 @@
     android:layout_height="wrap_content"
     android:layout_marginStart="8dp"
     android:layout_marginEnd="8dp"
-    android:background="@color/black"
+    style="@style/RvItemColor"
     app:cardElevation="4dp"
     app:cardUseCompatPadding="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/black">
+       style="@style/RvItemColor">
 
         <ImageView
             android:id="@+id/column"
@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="6dp"
             android:elegantTextHeight="true"
-            android:textColor="@color/white"
+            android:textColor="@color/home_text_view_color"
             android:textSize="16sp"
             app:layout_constraintStart_toEndOf="@+id/column"
             app:layout_constraintTop_toTopOf="parent"
@@ -81,7 +81,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:elegantTextHeight="true"
-            android:textColor="@color/white"
+            android:textColor="@color/home_text_view_color"
             android:textSize="16sp"
             android:drawableLeft="@drawable/ic_distance"
             app:layout_constraintBottom_toTopOf="@id/divider"

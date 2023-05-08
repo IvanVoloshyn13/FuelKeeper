@@ -1,9 +1,13 @@
 package com.example.fuelkeeper.di
 
+import android.content.Context
+import android.content.SharedPreferences
+import com.example.fuelkeeper.data.repository.SettingsRepositoryImpl
 import com.example.fuelkeeper.domain.repositoryInterface.AddNewRefuelRepository
 import com.example.fuelkeeper.domain.repositoryInterface.AllRefuelLogRepository
 import com.example.fuelkeeper.domain.repositoryInterface.EditRepository
 import com.example.fuelkeeper.domain.repositoryInterface.HomeRepository
+import com.example.fuelkeeper.domain.repositoryInterface.SettingsRepository
 import com.example.fuelkeeper.domain.usecase.addNewRefuelFrag.AddNewRefuelingUseCase
 import com.example.fuelkeeper.domain.usecase.addNewRefuelFrag.SetLocaleDateUseCase
 import com.example.fuelkeeper.domain.usecase.editFragment.EditLocaleDateUseCase
@@ -17,18 +21,21 @@ import com.example.fuelkeeper.domain.usecase.refuelRegisterLogDetail.DeleteRefue
 import com.example.fuelkeeper.domain.usecase.refuelRegisterLogDetail.GetAllRefuelLogUseCase
 import com.example.fuelkeeper.domain.usecase.refuelRegisterLogDetail.InsertDeletedRefuelItemUseCase
 import com.example.fuelkeeper.domain.usecase.refuelRegisterLogDetail.ReturnDeletedElementUseCase
+import com.example.fuelkeeper.domain.usecase.settingsFrag.GetIsNightModeUseCase
+import com.example.fuelkeeper.domain.usecase.settingsFrag.SaveIsNightModeStatusUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ViewModelComponent::class)
 class UseCaseModule {
 
     @Provides
-    @Singleton
     fun provideAddNewRefuelingUseCase(
         addNewRefuelRepository: AddNewRefuelRepository
     ): AddNewRefuelingUseCase {
@@ -36,7 +43,6 @@ class UseCaseModule {
     }
 
     @Provides
-    @Singleton
     fun provideSetLocaleDateUseCase(
         addNewRefuelRepository: AddNewRefuelRepository
     ): SetLocaleDateUseCase {
@@ -44,7 +50,6 @@ class UseCaseModule {
     }
 
     @Provides
-    @Singleton
     fun provideEditLocaleDateUseCase(
         addNewRefuelRepository: AddNewRefuelRepository
     ): EditLocaleDateUseCase {
@@ -52,7 +57,6 @@ class UseCaseModule {
     }
 
     @Provides
-    @Singleton
     fun provideGetRefuelByIdUseCase(
         editRepository: EditRepository
     ): GetRefuelByIdUseCase {
@@ -60,7 +64,6 @@ class UseCaseModule {
     }
 
     @Provides
-    @Singleton
     fun provideUpdateRefuelUseCase(
         editRepository: EditRepository
     ): UpdateRefuelUseCase {
@@ -68,7 +71,6 @@ class UseCaseModule {
     }
 
     @Provides
-    @Singleton
     fun provideGetAllTimeDrivingCostUseCase(
         homeRepository: HomeRepository
     ): GetAllTimeDrivingCostUseCase {
@@ -76,7 +78,6 @@ class UseCaseModule {
     }
 
     @Provides
-    @Singleton
     fun provideGetAllTimeFuelAverageUseCase(
         homeRepository: HomeRepository
     ): GetAllTimeFuelAverageUseCase {
@@ -84,7 +85,6 @@ class UseCaseModule {
     }
 
     @Provides
-    @Singleton
     fun provideGetLastRefuelDetailUseCase(
         homeRepository: HomeRepository
     ): GetLastRefuelDetailUseCase {
@@ -92,7 +92,6 @@ class UseCaseModule {
     }
 
     @Provides
-    @Singleton
     fun provideGetSummaryRefuelStatsUseCase(
         homeRepository: HomeRepository
     ): GetSummaryRefuelStatsUseCase {
@@ -100,7 +99,6 @@ class UseCaseModule {
     }
 
     @Provides
-    @Singleton
     fun provideDeleteRefuelLogUseCase(
         allRefuelLogRepository: AllRefuelLogRepository
     ): DeleteRefuelLogUseCase {
@@ -108,7 +106,6 @@ class UseCaseModule {
     }
 
     @Provides
-    @Singleton
     fun provideGetAllRefuelLogUseCase(
         allRefuelLogRepository: AllRefuelLogRepository
     ): GetAllRefuelLogUseCase {
@@ -116,7 +113,6 @@ class UseCaseModule {
     }
 
     @Provides
-    @Singleton
     fun provideReturnDeletedElementUseCase(
         allRefuelLogRepository: AllRefuelLogRepository
     ): ReturnDeletedElementUseCase {
@@ -124,11 +120,24 @@ class UseCaseModule {
     }
 
     @Provides
-    @Singleton
     fun provideInsertDeletedRefuelItemUseCase(
         allRefuelLogRepository: AllRefuelLogRepository
     ): InsertDeletedRefuelItemUseCase {
         return InsertDeletedRefuelItemUseCase(allRefuelLogRepository)
+    }
+
+    @Provides
+    fun provideSaveNightModeStatusUseCase(
+        settingsRepository: SettingsRepository
+    ): SaveIsNightModeStatusUseCase {
+        return SaveIsNightModeStatusUseCase(settingsRepository)
+    }
+
+    @Provides
+    fun provideGetNightModeUseCase(
+        settingsRepository: SettingsRepository
+    ): GetIsNightModeUseCase {
+        return GetIsNightModeUseCase(settingsRepository)
     }
 
 }

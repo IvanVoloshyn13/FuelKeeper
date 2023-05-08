@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<resources>
+    <style name="homeFragmentText">
+        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/home_text_view_color</item>
+        <item name="android:elegantTextHeight">true</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="homeFragmentNumbers">
+        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/home_text_view_number_color</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="homeFragmentUnit">
+        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/home_text_view_number_color</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="TextLabel" parent="TextAppearance.AppCompat">
+
+        <!-- Hint color and label color in FALSE state -->
+        <item name="android:textColorHint">#fff</item>
+        <item name="android:textSize">20sp</item>
+
+        <!-- Label color in TRUE state and bar color FALSE and TRUE State -->
+
+        <item name="colorAccent">@color/white</item>
+        <item name="colorControlNormal">#e34b1c</item>
+        <item name="colorControlActivated">#e34b1c</item>
+    </style>
+
+</resources>

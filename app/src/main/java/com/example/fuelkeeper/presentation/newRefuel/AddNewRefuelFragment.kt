@@ -43,10 +43,6 @@ class AddNewRefuelFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        fuelAmountFocusListener()
-        currentMileageFocusListener()
-        fuelPriceFocusListener()
-
         binding.etRefuelDate.showSoftInputOnFocus = false
 
         val imm = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -84,6 +80,14 @@ class AddNewRefuelFragment : Fragment() {
                     .show()
             }
         }
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        fuelAmountFocusListener()
+        currentMileageFocusListener()
+        fuelPriceFocusListener()
     }
 
     private fun setDateByDatePicker() {
@@ -129,7 +133,7 @@ class AddNewRefuelFragment : Fragment() {
     }
 
     private fun fuelAmountFocusListener() {
-        binding.etFuelAmount.setOnFocusChangeListener { view, focused ->
+        binding.etFuelAmount.setOnFocusChangeListener { _, focused ->
             if (!focused) {
                 binding.fuelAmountContainer.helperText =
                     validateManager.validFields(binding.etFuelAmount.text.toString())

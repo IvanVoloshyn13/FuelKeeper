@@ -1,16 +1,61 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.FuelKeeper" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.FuelKeeperDark" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_200</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/black</item>
+        <item name="colorPrimary">@color/purple_700</item>
+        <item name="colorPrimaryVariant">@color/teal_700</item>
+        <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_200</item>
+        <item name="colorSecondary">@color/home_text_view_color</item>
+        <item name="colorSecondaryVariant">@color/home_text_view_number_color</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor">@color/home_text_view_number_color</item>
         <!-- Customize your theme here. -->
+
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+
     </style>
+
+    <style name="BackgroundColor">
+        <item name="android:background">#000000</item>
+    </style>
+
+    <style name="RvItemColor">
+        <item name="android:background">#333333</item>
+        <item name="strokeWidth">2dp</item>
+    </style>
+
+    <style name="TextInputLayoutStyle">
+        <item name="android:background">#F7000000</item>
+        <item name="android:textColor">#F7FFFFFF</item>
+    </style>
+
+    <style name="TextInputLayoutColorHint">
+        <item name="android:textColorHint">#F7FFFFFF</item>
+        <item name="boxStrokeColor">#FFFFFF</item>
+    </style>
+
+
+    <style name="BottomNavMenuStyle">
+        <item name="backgroundTint">@color/bottom_nav_background</item>
+        <item name="itemIconTint">@color/home_text_view_color</item>
+        <item name="itemRippleColor">@color/purple_700</item>
+        <item name="itemTextColor">@color/home_text_view_number_color</item>
+
+    </style>
+
+    <style name="ThemeOverlay.MySwitchCompat" parent="">
+        <item name="colorControlActivated">#81EC68</item>
+        <item name="colorControlHighlight">#ECAC68</item>
+        <item name="colorSwitchThumbNormal">#f1f1f1</item>
+        <item name="android:colorForeground">#42EFEDE5</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+
+
 </resources>
