@@ -20,5 +20,5 @@ the refuelings, edit them or delete. On the main screen, we can see all statisti
 Clean Architecture with MVVM architectural pattern
 
 ##  Used Technologies
-Kotlin, Hilt Dependency Injection , Coroutines, Flow
+Kotlin, Hilt Dependency Injection , Coroutines, Flow, Room
 
